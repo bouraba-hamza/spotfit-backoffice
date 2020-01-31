@@ -4,6 +4,8 @@
 namespace App\Repositories;
 
 use App\Customer;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class CustomerRepository extends BaseRepository
 {
@@ -21,7 +23,8 @@ class CustomerRepository extends BaseRepository
     {
         $customer = $this->find($id);
         // update the account
-        $customer->account()->first()->update($args["account"]);
+        if(isset($args["account"]))
+            $customer->account()->first()->update($args["account"]);
         // finally the address
         if(isset($args['address']))
         {
@@ -34,15 +37,12 @@ class CustomerRepository extends BaseRepository
 
     public function insert(array $args)
     {
-        $customer = parent::insert($args);
+        // create a empty customer
+        $customer = parent::insert(["qrcode" => (string)Str::uuid(), "avatar" => 'a' . Arr::random([1, 2, 3, 4]) . '.png' ]);
 
-        if(isset($args['address']))
-        {
-            $customer->address()->save(new \App\Address($args['address']));
-        }
-
-        $customer->account()->save(new \App\Account($args['account']));
-
+        // account for to access the app
+        $account = new \App\Account($args);
+        $customer->account()->save($account);
         return $customer;
     }
 }

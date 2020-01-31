@@ -18,7 +18,7 @@ class CreatePartnersTable extends Migration
             $table->string('firstName')->nullable();
             $table->string('lastName')->nullable();
             $table->enum('gender', ['m', 'f'])->nullable();
-            $table->dateTime('birthDay')->nullable();
+            $table->date('birthDay')->nullable();
             $table->string('phoneNumber')->nullable();
             $table->string('jobTitle')->nullable();
             $table->string('cin')->nullable();

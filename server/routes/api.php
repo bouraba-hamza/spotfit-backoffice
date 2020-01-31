@@ -1,5 +1,9 @@
 <?php
 
+use \App\Http\Controllers\CustomerController;
+use \App\Http\Controllers\AuthController;
+use \App\Http\Controllers\IdentityCardController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -11,24 +15,15 @@
 |
  */
 
- /*
-Route::get('/clear-cache', function() {
-    $run = Artisan::call('config:clear');
-    $run = Artisan::call('cache:clear');
-    $run = Artisan::call('config:cache');
-    return 'FINISHED';
-});
-*/
-/*
-Route::get('images/{filename}', function ($filename)
-{
-    $file = '../public/uploads/logo/'($filename); //gymLogo_d620a8e6-0106-d78a-6197-9d84ce47ed18.png
-    return response($file, 200)->header('Content-Type', 'image/jpeg');
-});
-*/
 
+/**
+ * Auth
+ */
+Route::get('/me', 'AuthController@getAuthenticatedUser');
 Route::post('/login', 'AuthController@login');
+Route::post('/login/customer', [AuthController::class, 'authenticateCustomer']);
 Route::post('/logout', 'AuthController@logout');
+Route::post('/register', [CustomerController::class, 'store']);
 
 /**
  * PASSWORD
@@ -39,24 +34,30 @@ Route::get('/password/{ticket}/verify', 'PasswordController@verify');
 // send reset password link to email passed as parameter
 Route::post('/reset-password', 'PasswordController@sendResetLink');
 
-/* EMAIL VERIFICATION */
-Route::get('/verify-email/{code}', 'AuthController@verifyEmail');
+/**
+ *  EMAIL VERIFICATION
+ * */
+Route::get('/verify-email/{code}', [AuthController::class, 'verifyEmail']);
 Route::get('/token/refresh', 'AuthController@refresh');
 
-   /**
-     * Base64ToPngs
-     */
-    Route::get("/base64ToPng", "Base64ToPngController@index");
-    Route::put('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@destroy');
-    Route::post('/base64ToPng', 'Base64ToPngController@store');
-    //Route::post('/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
-    Route::post('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@update');
-    Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
 
+/**
+ * Base64ToPngs
+ */
+Route::get("/base64ToPng", "Base64ToPngController@index");
+Route::put('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@destroy');
+Route::post('/base64ToPng', 'Base64ToPngController@store');
+//Route::post('/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
+Route::post('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@update');
+Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
 
+Route::group(['middleware' => ['jwt', 'role:customer']], function () {
+    Route::post('/update-infos', [CustomerController::class, 'editProfile']);
+    Route::post('/identity-card/upload', [CustomerController::class, 'uploadIdentityCard']);
+    Route::get('/identity/{side}', [ IdentityCardController::class, 'getIdentityCard' ]);
+});
 
-
-Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function(){
+Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function () {
 
     /**
      * Homes
@@ -87,7 +88,6 @@ Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function(){
     Route::get('/facilitie/{facilitie_id}', 'FacilitieController@show');
 
 
-
     /**
      * Gyms
      */
@@ -97,7 +97,7 @@ Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function(){
     Route::post('/gym', 'GymController@store');
     Route::post('/gym/{gym_id}', 'GymController@update');
     Route::get('/gym/{gym_id}', 'GymController@show');
- //   Route::post('/gym/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
+    //   Route::post('/gym/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
 
 
     /**
@@ -125,10 +125,7 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
     /* USERS PROFILE PICTURES */
     Route::get('profile-picture/{filename}', 'ProfilePictureController@getAvatar');
 
-    /**
-     * Auth
-     */
-    Route::get('/me', 'AuthController@getAuthenticatedUser');
+
 
     /**
      * Admin
@@ -166,10 +163,9 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
     /**
      * Customer
      */
-    Route::get('/customers', 'CustomerController@index');
-    Route::post('/customers/{customer_id}', 'CustomerController@update');
-    Route::get('/customers/{customer_id}', 'CustomerController@show');
-    Route::put('/becomeAmbassador/{customer_id}/{promote}', 'CustomerController@becomeAmbassador');
+    Route::get('/customers', [CustomerController::class, 'index']);
+    Route::get('/customers/{customer_id}', [CustomerController::class, 'show']);
+    Route::put('/becomeAmbassador/{customer_id}/{promote}', [CustomerController::class, 'becomeAmbassador']);
 
     /**
      * Trainer
@@ -210,36 +206,36 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
 });
 
 
-    /**
-     * Groups
-     */
-    Route::get("/group", "GroupController@index");
-    Route::put('/group/{group_id}', 'GroupController@destroy');
-    Route::post('/group', 'GroupController@store');
-    Route::post('/group/{group_id}', 'GroupController@update');
-    Route::get('/group/{group_id}', 'GroupController@show');
+/**
+ * Groups
+ */
+Route::get("/group", "GroupController@index");
+Route::put('/group/{group_id}', 'GroupController@destroy');
+Route::post('/group', 'GroupController@store');
+Route::post('/group/{group_id}', 'GroupController@update');
+Route::get('/group/{group_id}', 'GroupController@show');
 
 
-    /**
-     * Gyms
-     */
-    /*
-    Route::get("/gym", "GymController@index_");
-    Route::get("/gym/show", "GymController@show");
-    Route::get("/gym/{gym_id}", "GymController@get");
-    Route::get("/gym/admin/{id_gerant}", "GymController@getByAdmin");
-    Route::post("/gym/add", "GymController@store");
-    Route::post("/gym/update", "GymController@update");
-    Route::delete("/gym/del/{id}", "GymController@destroy");
+/**
+ * Gyms
+ */
+/*
+Route::get("/gym", "GymController@index_");
+Route::get("/gym/show", "GymController@show");
+Route::get("/gym/{gym_id}", "GymController@get");
+Route::get("/gym/admin/{id_gerant}", "GymController@getByAdmin");
+Route::post("/gym/add", "GymController@store");
+Route::post("/gym/update", "GymController@update");
+Route::delete("/gym/del/{id}", "GymController@destroy");
 */
-    /**
-     * Equipements
-     */
-    Route::get("/equipements", "EquipementController@index");
-    Route::get("/equipements/show", "EquipementController@show");
-    Route::get("/equipements/{equipement_id}", "EquipementController@get");
-    Route::post("/equipements", "EquipementController@store");
-    Route::put("/equipements", "EquipementController@update");
-    Route::post("/equipements/update", "EquipementController@update");
-    Route::delete("/equipements/del/{equipement_id}", "EquipementController@destroy");
+/**
+ * Equipements
+ */
+Route::get("/equipements", "EquipementController@index");
+Route::get("/equipements/show", "EquipementController@show");
+Route::get("/equipements/{equipement_id}", "EquipementController@get");
+Route::post("/equipements", "EquipementController@store");
+Route::put("/equipements", "EquipementController@update");
+Route::post("/equipements/update", "EquipementController@update");
+Route::delete("/equipements/del/{equipement_id}", "EquipementController@destroy");
 

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\CustomerProfileCompleted;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Cashier\Billable;
 
@@ -21,7 +22,10 @@ class Customer extends Model
         'cin',
         'jobTitle',
         'avatar',
-        'ambassador'
+        'ambassador',
+        'IDF',
+        'IDB',
+        'completed',
     ];
 
     public function address()
@@ -50,5 +54,18 @@ class Customer extends Model
     public function sponsorships()
     {
         return $this->hasMany(Sponsorship::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::updating(function ($model) {
+
+            $completed = CustomerProfileCompleted::completed($model);
+            \Log::info(["completed" => $completed]);
+            // update the column completed
+            $model->completed = $completed;
+        });
     }
 }

@@ -12,8 +12,8 @@ $factory->define(Receptionist::class, function (Faker $faker) {
         'gender' => $faker-> randomElement($array = array ('m', 'f')),
         'birthDay' => $faker->date('Y-m-d', 'now'),
         'phoneNumber' => $faker->phoneNumber,
-        'cin' => $faker->text,
+        'cin' => strtoupper($faker->randomLetter) . strtoupper($faker->randomLetter) .  $faker->randomNumber($nbDigits = 8, true),
         'jobTitle' => $faker->jobTitle,
-        'avatar' => $faker->imageUrl($width = 640, $height = 480),
+        'avatar' => 'a' . $faker->randomElement([1, 2, 3, 4]) . '.png',
     ];
 });

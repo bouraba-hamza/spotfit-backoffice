@@ -19,11 +19,15 @@ class CreateCustomersTable extends Migration
             $table->string('firstName')->nullable();
             $table->string('lastName')->nullable();
             $table->enum('gender', ['m', 'f'])->nullable();
-            $table->dateTime('birthDay')->nullable();
+            $table->date('birthDay')->nullable();
             $table->string('phoneNumber')->nullable();
-            $table->string('cin')->nullable();
+            $table->string('IDF')->nullable();
+            $table->string('IDB')->nullable();
             $table->string('jobTitle')->nullable();
             $table->string('avatar')->nullable();
+            $table->tinyInteger('completed')
+                ->default(0)
+                ->comment("will be 1 if the customer provides us gender/firstName/lastName/birthDay/phoneNumber/idF/idB");
             $table->tinyInteger('ambassador')->default(0);
             $table->timestamps();
         });
