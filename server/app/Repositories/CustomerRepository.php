@@ -28,7 +28,13 @@ class CustomerRepository extends BaseRepository
         // finally the address
         if(isset($args['address']))
         {
-            $customer->address()->update($args['address']);
+
+            $address = $customer->address()->first();
+            if(!$address) {
+                $customer->address()->save(new \App\Address($args['address']));
+            } else {
+                $address->update($args['address']);
+            }
         }
         // the the customer profile
         parent::update($id, $args);

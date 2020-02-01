@@ -63,7 +63,6 @@ class Customer extends Model
         self::updating(function ($model) {
 
             $completed = CustomerProfileCompleted::completed($model);
-            \Log::info(["completed" => $completed]);
             // update the column completed
             $model->completed = $completed;
         });
