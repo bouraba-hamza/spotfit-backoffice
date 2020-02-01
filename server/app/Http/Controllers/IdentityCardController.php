@@ -11,9 +11,9 @@ class IdentityCardController extends Controller
     {
         // retrieve the customer
         $account = JWTAuth::parseToken()->authenticate();
-        if(!$account)
-            abort(404);
-        $customer =  $account->accountable()->first();
+        if (!$account)
+            return [ "errors" => "NOT_FOUND", "statusCode" => 404 ];
+        $customer = $account->accountable()->first();
 
         $side = strtolower($side);
         $filename = $side === 'front' ? $customer->IDF : $customer->IDB;
@@ -24,6 +24,6 @@ class IdentityCardController extends Controller
             abort(404);
         }
 
-        return response()->make(File::get($path), 200, ['Content-type' => File::mimeType($path)]);
+        return response()->json(["dataUrl" => 'data:' . File::mimeType($path) . ';base64,' . base64_encode(File::get($path))]);
     }
 }

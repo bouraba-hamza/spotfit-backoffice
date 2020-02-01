@@ -16,6 +16,8 @@ class GymRequest extends FormRequest
 'gym.qrcode' => 'le qrcode du gym est obligatoire ', 
 'gym.class_id' => 'le class_id du gym est obligatoire ', 
 'gym.facilities' => 'le facilities du gym est obligatoire ', 
+'gym.covers' => 'les covers du gym est obligatoire ', 
+'gym.summary' => 'le summary du gym est obligatoire ', 
 'gym.planning' => 'le planning du gym est obligatoire ', 
 
     ];
@@ -45,6 +47,8 @@ class GymRequest extends FormRequest
 'qrcode' => 'required', 
 'class_id' => 'required', 
 'facilities' => 'required', 
+'covers' => 'required', 
+'summary' => 'required', 
 'planning' => 'required', 
 
         ];

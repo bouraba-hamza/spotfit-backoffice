@@ -16,13 +16,13 @@
                         <div class="form-gym col-md-6 mb-2">
                             <h2>Logo</h2>
                             <div class="form-group">
-                                <input type="file" name="image" (change)="fileProgress($event)"/>
+                                <input type="file" name="image" (change)="fileProgress($event,'logo')"/>
                             </div>
                             <div *ngIf="fileUploadProgress">
                                 Upload progress: {{ fileUploadProgress }}
                             </div>
                             <div class="image-preview mb-3" *ngIf="previewUrl">
-                                <img [src]="previewUrl" height="300"/>
+                                <img id="img_logo" [src]="previewUrl" height="300"/>
                             </div>
 
                             <div class="mb-3" *ngIf="uploadedFilePath">
@@ -167,6 +167,57 @@
 
 
                     </div>
+
+
+                    <div id="divCoversForm" class="form-gym col-md-12 mb-2">               
+                            <p>Covers</p> 
+                            <div id="divCoversForm_cover_1" class="form-gym col-md-4 mb-2 form_covers">
+                                    <label class="sr-only" for="covers">covers 1</label>
+
+                                    <div class="form-group">
+                                        <input type="file" name="image_cover_1" (change)="fileProgress($event,'cover_1')" />
+                                    </div>
+                                    <div class="image-preview mb-3" *ngIf="previewUrl_cover_1">
+                                        <img class="divCoversForm_covers_imgs" [src]="previewUrl_cover_1" height="300"/>
+                                    </div>
+
+                            </div>                
+                            <div id="divCoversForm_cover_2" class="form-gym col-md-4 mb-2 form_covers">
+
+                                    <label class="sr-only" for="covers">covers 2</label>
+                                    <div class="form-group">
+                                        <input type="file" name="image_cover_2" (change)="fileProgress($event,'cover_2')"/>
+                                    </div>
+                                    <div class="image-preview mb-3" *ngIf="previewUrl_cover_2">
+                                        <img class="divCoversForm_covers_imgs" [src]="previewUrl_cover_2" height="300"/>
+                                    </div>
+
+                            </div>                
+                            <div id="divCoversForm_cover_3" class="form-gym col-md-4 mb-2 form_covers">
+
+                                    <label class="sr-only" for="covers">covers 3</label>
+                                    <div class="form-group">
+                                        <input type="file" name="image_cover_3" (change)="fileProgress($event,'cover_3')"/>
+                                    </div>
+                                    <div class="image-preview mb-3" *ngIf="previewUrl_cover_3">
+                                        <img class="divCoversForm_covers_imgs" [src]="previewUrl_cover_3" height="300"/>
+                                    </div>
+
+                            </div>
+ 
+   
+                            <input type="text" id="covers" class="form-control border-secondary"
+                            placeholder="covers du gym" ng-model="covers" formControlName="covers"   value="{{current_covers}}" readonly>
+
+                    </div>
+
+
+
+                    <div id="divSummaryForm" class="form-gym col-md-12 mb-2">             
+                            <p>Summary</p> 
+                            <textarea id="areaSummary" ng-model="summary"  formControlName="summary"  ></textarea>
+                    </div>      
+
 
 
                 </div>
