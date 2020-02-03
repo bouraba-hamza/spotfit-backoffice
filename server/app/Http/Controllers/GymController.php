@@ -3,11 +3,10 @@
 
 namespace App\Http\Controllers;
 
-
-use App\GroupSubscriptionType;
 use App\Gym;
 use App\GymSubscriptionType;
 use App\Type;
+use App\GroupSubscriptionType;
 use App\Repositories\GymRepository;
 use App\Http\Requests\GymRequest;
 use Illuminate\Http\Request;

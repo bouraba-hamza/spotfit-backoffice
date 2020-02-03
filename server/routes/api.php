@@ -206,6 +206,10 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
 });
 
 
+
+
+Route::get("/gym", "GymController@index");
+
 /**
  * Groups
  */
