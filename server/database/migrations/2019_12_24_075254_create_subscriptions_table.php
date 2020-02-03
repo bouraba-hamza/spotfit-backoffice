@@ -17,7 +17,7 @@ class CreateSubscriptionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->text('image')->nullable();
-            $table->string('duration');
+            $table->integer('duration');
             $table->text('description')->nullable();
             $table->timestamps();
         });

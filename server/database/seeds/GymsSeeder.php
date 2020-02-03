@@ -56,11 +56,23 @@ class GymsSeeder extends Seeder
 
         DB::table('gyms')->truncate();
         DB::table('gym_subscription_types')->truncate();
+        DB::table('addresses')->where("addressable_type",  "App\\Gym")->delete();
 
-        factory(\App\Gym::class, 5)
+        $i = 0;
+        factory(\App\Gym::class, 20)
             ->create()
-            ->each(function ($gym) {
-                $gym->address()->save(factory(App\Address::class)->make());
+            ->each(function ($gym) use (&$i) {
+                $i++;
+                $address = [
+                    ["latitude"=> 33.61416799, "longitude" => -7.55374872],
+                    ["latitude"=> 33.61253798, "longitude" => -7.59840514],
+                    ["latitude"=> 33.6085969, "longitude" => -7.6244165 ],
+                    ["latitude"=> 33.61416799, "longitude" => -7.55374872 ],
+                    ["latitude"=> 33.60592533, "longitude" => -7.62283524],
+                    ["latitude"=> 33.59574833, "longitude" => -7.59766488],
+                ];
+
+                $gym->address()->save(factory(App\Address::class)->make($address[$i] ?? $address[0]));
 
                 \App\Type::all()->each(function ($type) use ($gym) {
                     switch ($type->name) {

@@ -104,6 +104,9 @@ body{
 
 .image-preview{
     width: auto;
+    height: auto;
+}
+#img_logo{
     height: 17vw;
 }
 .image-preview img{
@@ -154,4 +157,65 @@ body{
         font-family: "Open Sans";
         font-weight: 400;
     }
+}
+
+#divCoversForm{
+    width: 100%;
+    border: 1px solid #868e96;
+    margin-top: 0.25%;
+    height: 19vw;
+    height: auto;
+    padding: 2%;
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: 65%;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.form_covers{
+    border: 1px solid #868e96;
+    height: 90%;
+    height: auto;
+    padding: 2%;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    background-size: 96%;
+    background-repeat: no-repeat;
+    background-position: 65%;
+    background-color: #5a5a5a;
+    color: #e6e6e6;
+}
+
+.divCoversForm_covers_imgs{
+    width: 100% !important;
+    height: auto !important;
+    margin: 0;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-color: #333333;
+}
+
+#divSummaryForm{
+    width: 100%;
+    border: 1px solid #868e96;
+    margin-top: 0.25%;
+    height: 19vw;
+    padding: 2%;
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: 65%;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#areaSummary{
+    resize: none;
+    width: 100%;
+    height: 86%;
+    background: #f9f9f9;
+    padding: 1%;
+    font-size: 110%;
+    font-style: italic;
 }

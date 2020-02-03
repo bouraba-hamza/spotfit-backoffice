@@ -21,7 +21,8 @@ class CreateGymsTable extends Migration
             $table->float('rate', 8, 2);
             $table->text('qrcode')->nullable();
             $table->unsignedInteger('class_id');
-            $table->json('facilities');
+            $table->json('covers');
+            $table->text('summary');
             $table->json('planning')->comment(
                 "format: \"{\"dayofweek(int)\": [{\"from\":\"hh:mm:ss\", \"to\": \"hh:mm:ss\",\"activity\": {name:\"cardio\", gender: \"male\", image: \"/path/to/image.png\"}}]}\""
             );

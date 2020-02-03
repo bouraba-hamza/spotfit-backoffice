@@ -14,8 +14,9 @@ class CreateCustomerSubscriptionStatusesTable extends Migration
     public function up()
     {
         Schema::create('customer_subscription_statuses', function (Blueprint $table) {
-            $table->integer('customer_subscription_id');
-            $table->integer('status_id');
+            $table->increments('id');
+            $table->integer('customer_subscription_id')->unsigned();
+            $table->integer('status_id')->unsigned();
             $table->timestamp("datetime");
         });
     }

@@ -19,38 +19,31 @@ class Gym extends Model
         "rate",
         "qrcode",
         "class_id",
+        "facilities",
+        "covers",
+        "summary",
         "planning",
 
     ];
-
-activities
-
-
 
     public function subscriptions()
     {
         return $this->hasMany(\App\GymSubscriptionType::class);
     }
 
-    public function activities()
+    public function address()
     {
-//        return $this->hasMany(Address::class, 'addressable');
+        return $this->morphOne(Address::class, 'addressable');
     }
-
-    public function gyms()
-    {
-        return $this->belongsToMany('App\Gym', "gyms");
-    }
-
-//    public function facilities()
-//    {
-//        return $this->hasMany('App\Gym', "gyms");
-//    }
 
     public function facilities()
     {
         return $this->belongsToMany(Facilitie::class,'gym_facilities',"gym_id",'facility_id');
+    }
 
+    public function activities()
+    {
+        return $this->belongsToMany(Activitie::class,'gym_activities',"gym_id",'activity_id');
     }
 
     public function group()
@@ -61,16 +54,6 @@ activities
     public function medal()
     {
         return $this->hasOne(Classe::class, 'id', 'class_id');
-    }
-
-    public function format(Classe $class)
-    {
-        // $book->loadMissing('author');
-
-        return [
-            'id' => $class->id,
-            'name' => $class->name,
-        ];
     }
 
     public function receptionist()
