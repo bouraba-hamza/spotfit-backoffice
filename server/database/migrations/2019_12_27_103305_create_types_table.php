@@ -15,7 +15,7 @@ class CreateTypesTable extends Migration
     {
         Schema::create('types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->enum('name', ["strict", "partout"]);
+            $table->enum('name', ["strict", "everywhere"]);
         });
     }
 

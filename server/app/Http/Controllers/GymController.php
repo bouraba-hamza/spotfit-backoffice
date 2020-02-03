@@ -4,12 +4,14 @@
 namespace App\Http\Controllers;
 
 
+use App\Address;
 use App\GroupSubscriptionType;
 use App\Gym;
 use App\GymSubscriptionType;
 use App\Type;
 use App\Repositories\GymRepository;
 use App\Http\Requests\GymRequest;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Validator;
 use Illuminate\Support\Facades\Log;
@@ -51,6 +53,30 @@ class GymController extends Controller
     {
         return $this->gym->all();
 
+    }
+
+    public function fetch()
+    {
+        $gyms = \App\Gym::with([
+            'group:id,name',
+            'medal:id,name',
+            'address:addressable_id,id,formattedAddress,city,postcode,latitude,longitude',
+            'subscriptions' => function ($q) {
+                return $q->select(['gym_id', 'subscription_id', 'type_id', 'price'])
+                    ->with(
+                        [
+                            'subscription' => function ($q) {
+                                return $q->select(["id", "name", 'duration']);
+                            },
+                            'type' => function ($q) {
+                                return $q->select(["id", "name"]);
+                            }
+                        ]
+                    );
+            },
+            'activities',
+        ])->get();
+        return $gyms;
     }
 
     /**
@@ -119,7 +145,7 @@ class GymController extends Controller
                     Log::info($priceAttach['passid'], ['typeid' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
 
                     $gymsubscription = GymSubscriptionType::create(['gym_id' => $gym_facilitie->id, 'subscription_id' => $priceAttach['passid'], 'type_id' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
-                    $groupsubscription = GroupSubscriptionType::create(['group_id' =>$request->get('group_id'), 'subscription_id' => $priceAttach['passid'], 'type_id' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
+                    $groupsubscription = GroupSubscriptionType::create(['group_id' => $request->get('group_id'), 'subscription_id' => $priceAttach['passid'], 'type_id' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
 
                 }
 

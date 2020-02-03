@@ -23,6 +23,20 @@ class Gym extends Model
 
     ];
 
+activities
+
+
+
+    public function subscriptions()
+    {
+        return $this->hasMany(\App\GymSubscriptionType::class);
+    }
+
+    public function activities()
+    {
+//        return $this->hasMany(Address::class, 'addressable');
+    }
+
     public function gyms()
     {
         return $this->belongsToMany('App\Gym', "gyms");
@@ -41,7 +55,22 @@ class Gym extends Model
 
     public function group()
     {
-        return $this->hasOne(Group::class);
+        return $this->hasOne(Group::class, 'id', 'group_id');
+    }
+
+    public function medal()
+    {
+        return $this->hasOne(Classe::class, 'id', 'class_id');
+    }
+
+    public function format(Classe $class)
+    {
+        // $book->loadMissing('author');
+
+        return [
+            'id' => $class->id,
+            'name' => $class->name,
+        ];
     }
 
     public function receptionist()
@@ -53,6 +82,8 @@ class Gym extends Model
     {
         return $this->hasOne(Supervisor::class);
     }
+
+
 }
 
 

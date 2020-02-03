@@ -12,4 +12,13 @@ class GymSubscriptionType extends Model
         'type_id',
         'price'
     ];
+
+//    protected $with = ['subscription', 'type'];
+
+    public function subscription() {
+        return $this->hasOne(Subscription::class, 'id', 'subscription_id');
+    }
+    public function type() {
+        return $this->hasOne(Type::class, 'id', 'type_id');
+    }
 }

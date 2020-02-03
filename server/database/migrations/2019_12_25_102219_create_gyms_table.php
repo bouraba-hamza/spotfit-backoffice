@@ -25,9 +25,6 @@ class CreateGymsTable extends Migration
             $table->json('planning')->comment(
                 "format: \"{\"dayofweek(int)\": [{\"from\":\"hh:mm:ss\", \"to\": \"hh:mm:ss\",\"activity\": {name:\"cardio\", gender: \"male\", image: \"/path/to/image.png\"}}]}\""
             );
-
-
-
             $table->foreign('class_id')->references('id')->on('classes')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
