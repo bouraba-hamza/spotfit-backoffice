@@ -6,22 +6,29 @@ use App\customerSubscription;
 use App\CustomerSubscriptionStatus;
 use App\Http\Requests\CustomerRequest;
 use App\Repositories\CustomerRepository;
+use App\Services\IdentityCardUploaderService;
 use App\Services\ProfileAvatarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Stripe\Transfer;
 use Validator;
+use JWTAuth;
 
 class CustomerController extends Controller
 {
     protected $customer;
     protected $profileAvatarService;
+    protected $identityCardUploaderService;
 
-    public function __construct(CustomerRepository $customerRepository, ProfileAvatarService $profileAvatarService)
-    {
+    public function __construct(
+        CustomerRepository $customerRepository,
+        ProfileAvatarService $profileAvatarService,
+        IdentityCardUploaderService $identityCardUploaderService
+    ) {
         $this->customer = $customerRepository;
         $this->profileAvatarService = $profileAvatarService;
+        $this->identityCardUploaderService = $identityCardUploaderService;
     }
 
     public function index()
@@ -187,15 +194,13 @@ class CustomerController extends Controller
 //        consumed_at
 //        remaining_sessions
             //Todo Send a call to QrCode generator
-            // Todo add Costumer Subscription
-            // Todo get values form gym_subscription_types so i should get the GymSubscriptionType id from the http request
             $customerSubscription = customerSubscription::create($data);
 
 
             Log::info($customerSubscription);
             // Todo attach status to custome subscription By confirmed when payed
             //status by default inactive
-            // Todo work with query builder for insert
+
 //            $tabCustomer = DB::table('customer_subscription_statuses')->insert(
 //                [
 //                    'customer_subscription_id' => $customerSubscription->id,
@@ -306,6 +311,41 @@ class CustomerController extends Controller
         return ['customer_id' => $customer_id];
     }
 
+
+    public function editProfile(Request $request)
+    {
+        $account = JWTAuth::parseToken()->authenticate();
+        if(!$account)
+            abort(404);
+        $customer =  $account->accountable()->first();
+
+        $data = $request->all();
+
+        // Updating email and password should not be here
+        /*unset($data['account']['email']);
+        unset($data['account']['password']);*/
+
+        $validator = Validator::make($data, [
+            'gender' => 'in:m,f',
+            'birthDay' => 'date_format:Y-m-d',
+            'avatar' => 'image',
+            'account.email' => "email|unique:accounts,email,{$customer->account->id}",
+            'account.password' => 'min:6',
+        ], CustomerRequest::VALIDATION_MESSAGES);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        if ($request->hasFile("avatar")) {
+            $data["avatar"] = $this->profileAvatarService->update($customer->avatar, $request->file("avatar"))["fakeName"];
+        }
+
+        $this->customer->update($customer->id, $data);
+
+        return ['customer_id' => $customer->id];
+    }
+
     public function becomeAmbassador(Request $request, $customer_id, $promote) {
         $customer = $this->customer->find($customer_id);
         if(!$customer) abort(404);
@@ -313,5 +353,60 @@ class CustomerController extends Controller
         $customer->update(["ambassador" => $promote]);
 
         return $customer;
+    }
+
+    public function storeclient(CustomerRequest $request)
+    {
+        // filter unwanted inputs from request
+        $customer = $request->all();
+
+        // create customer account
+        $customer = $this->customer->insert($customer);
+
+        // return the resource just created
+        return $this->customer->findBy("id", $customer->id);
+    }
+
+
+    public function uploadIdentityCard(Request $request) {
+        // \Log::info($request->all());
+
+        $data = $request->all();
+
+        // apply validation rules
+        $validator = Validator::make($data, [
+            'IDF'=> 'image|max:2048',
+            'IDB'=> 'image|max:2048',
+            'SELFIE'=> 'image|max:2048',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        // retrieve the customer
+        $account = JWTAuth::parseToken()->authenticate();
+        if(!$account)
+            abort(404);
+        $customer =  $account->accountable()->first();
+
+        // upload the files to SPOTFIT storage
+
+        if ($request->hasFile("SELFIE")) {
+            $data["avatar"] = $this->profileAvatarService->update($customer->avatar, $request->file("SELFIE"))["fakeName"];
+        }
+
+        if ($request->hasFile("IDF")) {
+            $data["IDF"] = $this->identityCardUploaderService->update($customer->IDF, $request->file("IDF"))["fakeName"];
+        }
+
+        if ($request->hasFile("IDB")) {
+            $data["IDB"] = $this->identityCardUploaderService->update($customer->IDB, $request->file("IDB"))["fakeName"];
+        }
+
+        unset($data['SELFIE']);
+
+        $this->customer->update($customer->id, $data);
+
+        return ['customer_id' => $customer->id];
     }
 }

@@ -10,7 +10,9 @@ qrcode?: string;
 class_id?: number;
 facilities?: string;
 planning?: string;
- 
+covers?: string;
+summary?: string;
+
        created_at?: string;
        updated_at?: string;
 

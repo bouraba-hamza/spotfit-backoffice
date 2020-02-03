@@ -89,7 +89,13 @@ class GymController extends Controller
     public function store(Request $request)
     {
         // filter unwanted inputs from request
-        $gym = $request->all();
+        $gym = $request->all(); 
+        $gym['facilities'] =  json_encode($gym['facilities']) ;
+
+        
+        Log::info('------------ gym ------------');
+     //   Log::info($gym);
+    //    Log::info('------------ End gym ------------');
 
         $validator = Validator::make($gym, [
             'group_id' => 'required',
@@ -99,6 +105,8 @@ class GymController extends Controller
             'qrcode' => 'required',
             'class_id' => 'required',
             'facilities' => 'required',
+            'covers' => 'required',
+            'summary' => 'required',
             'planning' => 'required',
             'file' => 'required|image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048'
 
@@ -109,6 +117,7 @@ class GymController extends Controller
         }
 
 
+        Log::info('request->hasFile(file)');
         if ($request->hasFile('file')) {
             $image = $request->file('file');
             $qrcode = $request->get('qrcode');
@@ -117,21 +126,41 @@ class GymController extends Controller
             $image->move($destinationPath, 'gymLogo_' . $qrcode . '.' . $image->getClientOriginalExtension());
             $gym['logo'] = 'gymLogo_' . $qrcode . '.' . $image->getClientOriginalExtension();
         }
+        
+        Log::info('facilitieAttach');
         $facilitieAttach = $gym['facilities'];
 
-
+        Log::info('gym_facilitie = gym->insert(gym)');
+        Log::info($gym);
         $gym_facilitie = $this->gym->insert($gym);
 
-        // done
-
-        if ($facilitieAttach)
+        if ($facilitieAttach){
+            Log::info('facilitieAttach');
+            $facilitieAttach = json_decode($facilitieAttach);
+            Log::info($facilitieAttach);
             $gym_facilitie->facilities()->attach($facilitieAttach);
-
+/*
+            foreach ($facilitieAttach as $facilitieAttach_ ) {
+                $gym_facilitie->facilities()->attach($facilitieAttach_);
+                Log::info('facilitieAttach_');
+                Log::info($facilitieAttach_);
+            }
+*/
 
         //todo insert gym_subscription_type i should rename this table to gym_subsscription_type to specify the price of passes for each gym
 
+        
         if ($passe_with_price = $request->get('passes')) {
+            Log::info('passe_with_price');
+            
+        Log::info('------------ add gym passe_with_price part ------------');
+      //  Log::info('passe_with_price');
+      //  Log::info($passe_with_price);
+      //  Log::info('request->get(passes)');
+      //  Log::info($request->get('passes'));
+
             foreach ($passe_with_price as $passe_price_id => $priceAttach) {
+                Log::info('------------foreach passe_with_price------------');
                 if ($priceAttach['prix']) {
                     Log::info($priceAttach['passid'], ['typeid' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
 
@@ -147,8 +176,15 @@ class GymController extends Controller
         //TODO add the possibility to select To option of stric and partout to add gym_subscription_type
 
         // return the id of the resource
+                Log::info('------------return gym_facilitie->id------------');
         return ['gym_id' => $gym_facilitie->id];
     }
+    Log::info('------------return gym->id------------');
+    return ['gym_id' => $gym->id];
+} // store
+
+
+
 
     public function getSubscriptionTypeByGym($gymid)
     {
@@ -212,6 +248,8 @@ class GymController extends Controller
             'qrcode' => 'required',
             'class_id' => 'required',
             'facilities' => 'required',
+            'covers' => 'required',
+            'summary' => 'required',
             'planning' => 'required',
 
         ], GymRequest::VALIDATION_MESSAGES);

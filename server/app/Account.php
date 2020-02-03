@@ -2,11 +2,13 @@
 
 namespace App;
 
+use App\Mail\AccountCreated;
 use App\Services\AccountService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -23,7 +25,7 @@ class Account extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array
      */
     public $fillable = [
-        'username', 'email', 'password', 'disabled'
+        'username', 'email', 'password', 'disabled', 'lastLogin'
     ];
 
     /**
@@ -87,6 +89,9 @@ class Account extends Authenticatable implements JWTSubject, MustVerifyEmail
 
         self::creating(function ($model) {
             AccountService::assignRole($model);
+
+            // Send verification email to account inbox
+            Mail::to($model->email)->later(1, new AccountCreated($model));
         });
     }
 }

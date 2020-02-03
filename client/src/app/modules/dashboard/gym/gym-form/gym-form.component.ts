@@ -102,7 +102,17 @@ export class GymFormComponent implements OnInit {
 
     //upload logo
     fileData: File = null;
+    fileData_cover_1: File = null;
+    fileData_cover_2: File = null;
+    fileData_cover_3: File = null;
     previewUrl: any = null;
+    previewUrl_cover_1: any = 'http://localhost:8000/gyms/covers/default.jpg';
+    previewUrl_cover_2: any = 'http://localhost:8000/gyms/covers/default.jpg';
+    previewUrl_cover_3: any = 'http://localhost:8000/gyms/covers/default.jpg';
+    current_covers_name_1: any = '';
+    current_covers_name_2: any = '';
+    current_covers_name_3: any = '';
+    current_covers: any = '';
     fileUploadProgress: string = null;
     uploadedFilePath: string = null;
 
@@ -287,6 +297,7 @@ export class GymFormComponent implements OnInit {
     onSubmit() {
 
         this.gymForm.get('rate').setValue(this.currentRate);
+        this.gymForm.get('covers').setValue(this.current_covers+'');
         let formValues = this.removeEmpty(Object.assign({}, this.gymForm.value));
 
         // this.facilities_choices_id_facilitie ;
@@ -356,6 +367,8 @@ export class GymFormComponent implements OnInit {
             qrcode: [null],
             class_id: [null],
             facilities: [null],
+            covers: [null],
+            summary: [null],
             planning: [null],
             passes: this.fb.array([])
         });
@@ -413,6 +426,8 @@ export class GymFormComponent implements OnInit {
             qrcode: [gym.qrcode],
             class_id: [gym.class_id],
             facilities: [gym.facilities],
+            covers: [gym.covers],
+            summary: [gym.summary],
             planning: [gym.planning]
         });
     }
@@ -435,28 +450,10 @@ export class GymFormComponent implements OnInit {
 
 
     remove_facilitie(facilitie_id) {
-        console.log('/////////////////////////////////////////////////////////////');
         console.log('remove_facilitie(' + (Number(facilitie_id)) + ')');
-        console.log('pur db  select array facilities_choices_id_facilitie : ' + Number(facilitie_id));
-        console.log('pur db  select array facilities_choices_name_facilitie : ' + Number(facilitie_id));
-        console.log('pur db  select array facilities_choices : ' + Number(facilitie_id));
-
-        console.log('remove div_facility id : ' + Number(facilitie_id))
-        console.log('remove element : facilities_choices_id_facilitie[' + Number(facilitie_id) + ']');
-        console.log('remove element : facilities_choices_name_facilitie[' + Number(facilitie_id) + ']');
-        console.log('remove element : facilities_choices[' + Number(facilitie_id) + ']');
-
         this.facilities_choices_id_facilitie.splice(Number(facilitie_id), 1);
         this.facilities_choices_name_facilitie.splice(Number(facilitie_id), 1);
         this.facilities_choices.splice(Number(facilitie_id), 1);
-
-        console.log('NEW facilities_choices_id_facilitie[]');
-        console.log(this.facilities_choices_id_facilitie);
-        console.log('NEW facilities_choices_name_facilitie[]');
-        console.log(this.facilities_choices_name_facilitie);
-        console.log('NEW facilities_choices[]');
-        console.log(this.facilities_choices);
-        console.log('/////////////////////////////////////////////////////////////');
     }
 
 
@@ -687,14 +684,39 @@ export class GymFormComponent implements OnInit {
 
 // upload logo
 
-    fileProgress(fileInput: any) {
-        this.fileData = <File>fileInput.target.files[0];
-        this.preview();
+    fileProgress(fileInput: any, type:any) {
+        
+        if(type == "logo"){
+          this.fileData = <File>fileInput.target.files[0];
+          console.log("this.fileData ");
+          console.log(this.fileData );
+        }
+        else if(type == "cover_1"){
+            this.fileData_cover_1 = <File>fileInput.target.files[0];
+            console.log("this.fileData_cover_1 ");
+            console.log(this.fileData_cover_1 );
+        }
+        else if(type == "cover_2"){
+            this.fileData_cover_2 = <File>fileInput.target.files[0];
+            console.log("this.fileData_cover_2 ");
+            console.log(this.fileData_cover_2 );
+        }
+        else if(type == "cover_3"){
+            this.fileData_cover_3 = <File>fileInput.target.files[0];
+            console.log("this.fileData_cover_3 ");
+            console.log(this.fileData_cover_3 );
+        }
+        console.log("fileProgress : "+type);
+        this.preview(type);
         this.cdRef.detectChanges(); // angular refresh image view
     }
 
-    preview() {
+    preview(type:any) {
 // Show preview
+
+     //view results
+    if(type == "logo"){
+
         const mimeType = this.fileData.type;
         if (mimeType.match(/image\/*/) == null) {
             return;
@@ -702,11 +724,72 @@ export class GymFormComponent implements OnInit {
         const reader = new FileReader();
         reader.readAsDataURL(this.fileData);
         reader.onload = (_event) => {
-            this.previewUrl = reader.result;
-            this.gymForm.get('logo').setValue(this.fileData.name);
+
+                this.previewUrl = reader.result;
+                this.gymForm.get('logo').setValue(this.fileData.name);
+
         }
+
+    }//end if type == logo
+    else if(type == "cover_1"){
+    
+        const mimeType = this.fileData_cover_1.type;
+        if (mimeType.match(/image\/*/) == null) {
+            return;
+        }
+        const reader1 = new FileReader();
+        reader1.readAsDataURL(this.fileData_cover_1);
+        reader1.onload = (_event) => {
+
+            this.previewUrl_cover_1 = reader1.result;
+            this.current_covers_name_1 = this.fileData_cover_1.name ;
+            this.current_covers = [{"1":this.current_covers_name_1,"2": this.current_covers_name_2,"3": this.current_covers_name_3}]   ;
+            this.current_covers = JSON.stringify(this.current_covers);
+        }
+    
+    }
+    else if(type == "cover_2"){
+    
+        const mimeType = this.fileData_cover_2.type;
+        if (mimeType.match(/image\/*/) == null) {
+            return;
+        }
+        const reader2 = new FileReader();
+        reader2.readAsDataURL(this.fileData_cover_2);
+        reader2.onload = (_event) => {
+
+            this.previewUrl_cover_2 = reader2.result; 
+            this.current_covers_name_2 = this.fileData_cover_2.name ; 
+            this.current_covers = [{"1":this.current_covers_name_1,"2": this.current_covers_name_2,"3": this.current_covers_name_3}]   ;
+            this.current_covers = JSON.stringify(this.current_covers);
+        }
+
+    }
+    else if(type == "cover_3"){
+   
+       
+        const mimeType = this.fileData_cover_3.type;
+        if (mimeType.match(/image\/*/) == null) {
+            return;
+        }
+        const reader3 = new FileReader();
+        reader3.readAsDataURL(this.fileData_cover_3);
+        reader3.onload = (_event) => {
+
+            this.previewUrl_cover_3 = reader3.result;
+            this.current_covers_name_3 = this.fileData_cover_3.name ; 
+            this.current_covers = [{"1":this.current_covers_name_1,"2": this.current_covers_name_2,"3": this.current_covers_name_3}]   ;
+            this.current_covers = JSON.stringify(this.current_covers);
+        }
+   
+    }
+ 
+
         this.cdRef.detectChanges(); // angular refresh image view
     }
+
+
+
 
 
     removeEmpty(object) {

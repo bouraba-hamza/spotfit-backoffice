@@ -7,17 +7,19 @@ use Illuminate\Http\Request;
 use JWTAuth;
 use JWTException;
 use Illuminate\Support\Facades\Log;
+use phpDocumentor\Reflection\Types\Boolean;
 
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request, $emailVerification = true)
     {
-        $credentials = $request->only('username', 'password');
+        $credentials = $request->only('username', 'password', 'email');
 
         // verify if the user exist
-        $account = Account::where("username", "=", trim($credentials["username"]))
-            ->orWhere("email", "=", trim($credentials["username"]))
+        $account = Account::where("username", "=", trim($credentials["username"] ?? NULL))
+            ->orWhere("email", "=", trim($credentials["username"] ?? NULL))
+            ->orWhere("email", "=", trim($credentials["email"] ?? NULL))
             ->first();
         // in case request user dosn't exist
         if (!$account) {
@@ -32,9 +34,11 @@ class AuthController extends Controller
             return ["errors" => ["les informations d'identification invalides: "]];
         }
 
-        // email must to be verified
-        if(!$account->email_verified_at != null)
-            return ["errors" => ["vérifier votre boîte de réception pour confirmer la propriété de l'email"]];
+        if($emailVerification) {
+            // email must to be verified
+            if (!$account->email_verified_at != null)
+                return ["errors" => ["vérifier votre boîte de réception pour confirmer la propriété de l'email"]];
+        }
 
         // disabled account forbidden to access app
         if ($account->disabled === 1) {
@@ -48,15 +52,19 @@ class AuthController extends Controller
         }
 
         // who is the owner
-//         $account_owner = $account->accountable()->first();
         $account_owner = $account->accountable()->first();
 
+        // mark this pass
+        $account->update(["lastLogin" => now()]);
 
         // reformat the response
         $account_owner["jwtToken"] = $this->formatToken($token);
         return $account_owner;
+    }
 
-
+    public function authenticateCustomer(Request $request)
+    {
+        return $this->login($request, false);
     }
 
     private function formatToken($token)

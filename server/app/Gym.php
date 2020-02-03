@@ -19,6 +19,9 @@ class Gym extends Model
         "rate",
         "qrcode",
         "class_id",
+        "facilities",
+        "covers",
+        "summary",
         "planning",
 
     ];
