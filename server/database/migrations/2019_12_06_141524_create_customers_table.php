@@ -21,6 +21,7 @@ class CreateCustomersTable extends Migration
             $table->enum('gender', ['m', 'f'])->nullable();
             $table->date('birthDay')->nullable();
             $table->string('phoneNumber')->nullable();
+            $table->string('cin')->nullable();
             $table->string('IDF')->nullable();
             $table->string('IDB')->nullable();
             $table->string('jobTitle')->nullable();

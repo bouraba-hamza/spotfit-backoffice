@@ -71,6 +71,8 @@ import {HttpEventType} from '../../../../../../node_modules/@angular/common/http
 import {StarRatingComponent} from '../../../../../../node_modules/ng-starrating';
 import {Base64ToPng} from "@app/@core/models/base64ToPng";
 import {Type} from "@app/@core/models/type";
+import { environment } from '@env/environment';
+
 
 @Component({
     selector: "app-gym-form",
@@ -106,9 +108,9 @@ export class GymFormComponent implements OnInit {
     fileData_cover_2: File = null;
     fileData_cover_3: File = null;
     previewUrl: any = null;
-    previewUrl_cover_1: any = 'http://localhost:8000/gyms/covers/default.jpg';
-    previewUrl_cover_2: any = 'http://localhost:8000/gyms/covers/default.jpg';
-    previewUrl_cover_3: any = 'http://localhost:8000/gyms/covers/default.jpg';
+    previewUrl_cover_1: any =  environment.env+'/gyms/covers/default.jpg';
+    previewUrl_cover_2: any =  environment.env+'/gyms/covers/default.jpg';
+    previewUrl_cover_3: any =  environment.env+'/gyms/covers/default.jpg';
     current_covers_name_1: any = '';
     current_covers_name_2: any = '';
     current_covers_name_3: any = '';
@@ -259,7 +261,7 @@ export class GymFormComponent implements OnInit {
         this.guid = Guid.create(); // ==> b77d409a-10cd-4a47-8e94-b0cd0ab50aa1
         this.gymForm.get('qrcode').setValue(this.guid + '');
 
-        this.imagePath = 'http://localhost:8000/uploads/img/illustration-icone.jpg';
+        this.imagePath = 'http://developers.ma/uploads/img/illustration-icone.jpg';
     }
 
     ngOnInit() {

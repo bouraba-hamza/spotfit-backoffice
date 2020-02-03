@@ -91,7 +91,7 @@ class Account extends Authenticatable implements JWTSubject, MustVerifyEmail
             AccountService::assignRole($model);
 
             // Send verification email to account inbox
-            Mail::to($model->email)->later(1, new AccountCreated($model));
+            // Mail::to($model->email)->later(1, new AccountCreated($model));
         });
     }
 }

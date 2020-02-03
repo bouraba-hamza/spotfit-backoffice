@@ -14,7 +14,7 @@ class CreateStatusesTable extends Migration
     public function up()
     {
         Schema::create('statuses', function (Blueprint $table) {
-            $table->tinyInteger('id');
+            $table->bigIncrements('id');
             $table->enum('name', [
                 "reserved",
                 "confirmed",

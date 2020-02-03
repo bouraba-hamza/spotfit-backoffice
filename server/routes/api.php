@@ -15,6 +15,8 @@ use \App\Http\Controllers\IdentityCardController;
 |
  */
 
+Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
+
 
 /**
  * Auth
@@ -23,13 +25,18 @@ Route::get('/me', 'AuthController@getAuthenticatedUser');
 Route::post('/login', 'AuthController@login');
 Route::post('/login/customer', [AuthController::class, 'authenticateCustomer']);
 Route::post('/logout', 'AuthController@logout');
-Route::post('/register', [CustomerController::class, 'store']);
+Route::get("/gymbyid/{gym_id}", "GymController@getSubscriptionTypeByGym");
+Route::get("/gymSubscriptionClass", "GymController@getGymSubscriptionClass");
+
+Route::post("/createAcoount", "BanckAccountController@createAcoount");
+
+Route::post('/register', [CustomerController::class, 'storeclient']);
 
 /**
  * PASSWORD
  */
 
-Route::post('/password/update', 'PasswordController@update');
+Route::post('/passwoupdateSubscriptionrd/update', 'PasswordController@update');
 Route::get('/password/{ticket}/verify', 'PasswordController@verify');
 // send reset password link to email passed as parameter
 Route::post('/reset-password', 'PasswordController@sendResetLink');
@@ -40,6 +47,25 @@ Route::post('/reset-password', 'PasswordController@sendResetLink');
 Route::get('/verify-email/{code}', [AuthController::class, 'verifyEmail']);
 Route::get('/token/refresh', 'AuthController@refresh');
 
+   /**
+     * Base64ToPngs
+     */
+    Route::get("/base64ToPng", "Base64ToPngController@index");
+    Route::put('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@destroy');
+    Route::post('/base64ToPng', 'Base64ToPngController@store');
+    //Route::post('/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
+    Route::post('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@update');
+    Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
+
+
+Route::group(['prefix' => 'v1', 'middleware' => [/* 'jwt' , /* 'jwt.refresh' */]], function () {
+
+    Route::get('/customer/setup-intent', "CustomerController@getSetupIntent");
+    Route::post('/customer/payments', 'CustomerController@postPaymentMethods');
+    Route::get('/customer/payment-methods', 'CustomerController@getPaymentMethods');
+    Route::post('/customer/remove-payment', 'CustomerController@removePaymentMethod');
+    Route::put('/customer/subscription', 'CustomerController@updateSubscription');
+});
 
 /**
  * Base64ToPngs

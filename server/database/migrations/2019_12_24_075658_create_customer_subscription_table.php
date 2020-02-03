@@ -16,8 +16,7 @@ class CreateCustomerSubscriptionTable extends Migration
         Schema::create('customer_subscription', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('customer_id');
-            $table->integer('group_subscription_id');
-            $table->integer('group_subscription_type_id');
+            $table->integer('gym_subscription_type');
             $table->float('price');
             $table->text('qrcode');
             $table->integer('payment_method_id');
