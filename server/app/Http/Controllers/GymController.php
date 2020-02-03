@@ -11,6 +11,7 @@ use App\Type;
 use App\Repositories\GymRepository;
 use App\Http\Requests\GymRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -50,6 +51,22 @@ class GymController extends Controller
     public function index()
     {
         return $this->gym->all();
+
+    }
+
+
+    public function getGymSubscriptionClass()
+    {
+
+        $gymsubscriptionclass = DB::table('gyms')
+            ->join('gym_subscription_types', 'gym_subscription_types.gym_id', '=', 'gyms.id')
+            ->join('subscriptions', 'subscriptions.id', '=', 'gym_subscription_types.subscription_id')
+            ->Join('classes', 'classes.id', '=', 'gyms.class_id')
+//            ->groupBy('gym_subscription_types.gym_id')
+            ->select('gym_subscription_types.gym_id','subscriptions.name as subscriptioname','gyms.name', 'classes.name as classname', 'classes.id as classes.id')
+            ->get();
+
+        return $gymsubscriptionclass;
 
     }
 
@@ -119,7 +136,7 @@ class GymController extends Controller
                     Log::info($priceAttach['passid'], ['typeid' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
 
                     $gymsubscription = GymSubscriptionType::create(['gym_id' => $gym_facilitie->id, 'subscription_id' => $priceAttach['passid'], 'type_id' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
-                    $groupsubscription = GroupSubscriptionType::create(['group_id' =>$request->get('group_id'), 'subscription_id' => $priceAttach['passid'], 'type_id' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
+//                    $groupsubscription = GroupSubscriptionType::create(['group_id' => $request->get('group_id'), 'subscription_id' => $priceAttach['passid'], 'type_id' => $priceAttach['typeid'], 'price' => $priceAttach['prix']]);
 
                 }
 
@@ -131,6 +148,25 @@ class GymController extends Controller
 
         // return the id of the resource
         return ['gym_id' => $gym_facilitie->id];
+    }
+
+    public function getSubscriptionTypeByGym($gymid)
+    {
+//        $projectData = DB::table('projects')
+//        ->Join('categories','categories.id','=','projects.categorie_id')
+//        ->Join('adresses','adresses.project_id','=','projects.id')
+//        ->Join('villes','villes.id','=','adresses.ville_id')
+//        ->select('projects.*','categories.nom as categories','villes.nom as villes' )
+//        ->orderBy('projects.id','desc')
+//        ->get();
+
+        $subscriptiontype = Gym::where('gym_id', $gymid)->join('gym_subscription_types', 'gym_subscription_types.gym_id', '=', 'gyms.id')
+            ->Join('classes', 'classes.id', '=', 'gyms.class_id')
+            ->select('gym_subscription_types.*', 'classes.name as classname')
+            ->get();
+
+        return $subscriptiontype;
+
     }
 
     /**

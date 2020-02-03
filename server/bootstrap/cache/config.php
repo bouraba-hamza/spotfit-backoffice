@@ -695,6 +695,23 @@
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
   ),
+  'cashier' => 
+  array (
+    'key' => 'pk_test_NAxT0qCctTUwu0YT8hIZRfYg00iDia9MRC',
+    'secret' => 'sk_test_A2o5D96F7v1MDIQ8VUXghqAZ00U6SEtx8t',
+    'path' => 'stripe',
+    'webhook' => 
+    array (
+      'secret' => NULL,
+      'tolerance' => 300,
+    ),
+    'model' => 'App\\Customer',
+    'currency' => 'mad',
+    'currency_locale' => 'en',
+    'payment_notification' => NULL,
+    'paper' => 'letter',
+    'logger' => 'default',
+  ),
   'trustedproxy' => 
   array (
     'proxies' => NULL,

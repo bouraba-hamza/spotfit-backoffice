@@ -29,12 +29,17 @@ Route::get('images/{filename}', function ($filename)
 
 Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
+Route::get("/gymbyid/{gym_id}", "GymController@getSubscriptionTypeByGym");
+Route::get("/gymSubscriptionClass", "GymController@getGymSubscriptionClass");
+
+Route::post("/createAcoount", "BanckAccountController@createAcoount");
+
 
 /**
  * PASSWORD
  */
 
-Route::post('/password/update', 'PasswordController@update');
+Route::post('/passwoupdateSubscriptionrd/update', 'PasswordController@update');
 Route::get('/password/{ticket}/verify', 'PasswordController@verify');
 // send reset password link to email passed as parameter
 Route::post('/reset-password', 'PasswordController@sendResetLink');
@@ -54,6 +59,14 @@ Route::get('/token/refresh', 'AuthController@refresh');
     Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
 
 
+Route::group(['prefix' => 'v1', 'middleware' => [/* 'jwt' , /* 'jwt.refresh' */]], function () {
+
+    Route::get('/customer/setup-intent', "CustomerController@getSetupIntent");
+    Route::post('/customer/payments', 'CustomerController@postPaymentMethods');
+    Route::get('/customer/payment-methods', 'CustomerController@getPaymentMethods');
+    Route::post('/customer/remove-payment', 'CustomerController@removePaymentMethod');
+    Route::put('/customer/subscription', 'CustomerController@updateSubscription');
+});
 
 
 Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function(){
