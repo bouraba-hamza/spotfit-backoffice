@@ -184,7 +184,7 @@ class CustomerController extends Controller
 
         try {
 //            20000 equivalent a 200 dh because stripe take all amount as a cent so 2000 cent /100 => ? dh
-            $stripeCharge = $customer->charge(39900,$paymentID);
+            $stripeCharge = $customer->charge(39999,$paymentID);
 
 //        group_subscription_id
 //        customer_id

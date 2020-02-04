@@ -30,6 +30,8 @@ Route::post("/createAcoount", "BanckAccountController@createAcoount");
 
 Route::post('/register', [CustomerController::class, 'storeclient']);
 
+// php storage link
+
 /**
  * PASSWORD
  */
