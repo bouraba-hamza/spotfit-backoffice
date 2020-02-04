@@ -53,6 +53,22 @@ class GymsSeeder extends Seeder
         \App\Type::insert($types);
         // #TYPES
 
+        // FACILITIES
+        DB::table('gym_facilities')->truncate();
+        DB::table('facilities')->truncate();
+        for ($i = 1; $i <= 6; $i++) {
+            factory(\App\Facilitie::class)->create(["icon" => "f{$i}.svg"]);
+        }
+        // #FACILITIES
+
+        // ACTIVITIES
+        DB::table('gym_activities')->truncate();
+        DB::table('activities')->truncate();
+        for ($i = 1; $i <= 3; $i++) {
+            factory(\App\Activitie::class)->create(["icon" => "a{$i}.svg"]);
+        }
+        // #ACTIVITIES
+
 
         DB::table('gyms')->truncate();
         DB::table('gym_subscription_types')->truncate();
@@ -72,8 +88,10 @@ class GymsSeeder extends Seeder
                     ["latitude"=> 33.59574833, "longitude" => -7.59766488],
                 ];
 
+                // Addresses
                 $gym->address()->save(factory(App\Address::class)->make($address[$i] ?? $address[0]));
 
+                // Prices
                 \App\Type::all()->each(function ($type) use ($gym) {
                     switch ($type->name) {
                         case 'strict':
@@ -99,6 +117,13 @@ class GymsSeeder extends Seeder
                     }
                 });
 
+                // Facilities
+                $facilities = \App\Facilitie::inRandomOrder()->limit($this->faker->numberBetween(5, 6))->get();
+                $gym->facilities()->saveMany($facilities);
+
+                // Activities
+                $activities = \App\Activitie::inRandomOrder()->limit($this->faker->numberBetween(1, 4))->get();
+                $gym->activities()->saveMany($activities);
 
             });
     }

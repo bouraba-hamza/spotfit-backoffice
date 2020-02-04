@@ -2,12 +2,19 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Activity;
+use App\Activitie;
 use Faker\Generator as Faker;
 
-$factory->define(Activity::class, function (Faker $faker) {
-     return [
-            'name' => $faker->name,
-            'icon' => $faker->imageUrl($width = 640, $height = 480),
-            ];
+$factory->define(Activitie::class, function (Faker $faker) {
+    $activities = [];
+
+    for ($i = 1; $i < 3; $i++) {
+        array_push($activities, "a{$i}.svg");
+    }
+
+    return [
+        "icon" => $faker->randomElement($activities),
+        "name" => $faker->word,
+        "order" => $faker->numberBetween(0, 100),
+    ];
 });

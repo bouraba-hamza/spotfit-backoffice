@@ -8,6 +8,7 @@ use App\Address;
 use App\GroupSubscriptionType;
 use App\Gym;
 use App\GymSubscriptionType;
+use App\Services\AuthService;
 use App\Type;
 use App\Repositories\GymRepository;
 use App\Http\Requests\GymRequest;
@@ -26,13 +27,16 @@ class GymController extends Controller
      */
     private $gym;
 
+    private $authService;
+
 
     /**
      * gymController constructor.
      * @param GymRepository $GymRepository
      */
-    public function __construct(GymRepository $gymRepository)
+    public function __construct(GymRepository $gymRepository, AuthService $authService)
     {
+        $this->authService = $authService;
         $this->gym = $gymRepository;
     }
 
@@ -79,6 +83,61 @@ class GymController extends Controller
         ])->get();
         return $gyms;
     }
+
+    public function getById($gymId)
+    {
+        return \App\Gym::with([
+            'group:id,name',
+            'medal:id,name',
+            'address:addressable_id,id,formattedAddress,city,postcode,latitude,longitude',
+            'subscriptions' => function ($q) {
+                return $q->select(['gym_id', 'subscription_id', 'type_id', 'price'])
+                    ->with(
+                        [
+                            'subscription' => function ($q) {
+                                return $q->select(["id", "name", 'duration']);
+                            },
+                            'type' => function ($q) {
+                                return $q->select(["id", "name"]);
+                            }
+                        ]
+                    );
+            },
+            'activities',
+            'facilities',
+        ])->where("id", $gymId)->first();
+    }
+
+    public  function getFavoritesGyms($howBig = 'default') {
+        $customer =  $this->authService->connected(true);
+
+        /*$selectedColumns = ["id"];
+        switch ($howBig) {
+            case 'sm':
+                array_merge($selectedColumns, ["id", "address", "name"]);
+                break;
+        }*/
+
+        return $customer->favoritesGyms()->with(['address:addressable_id,formattedAddress'])->orderBy("gym_id", "desc")->get();
+    }
+
+    public function likeGym($gymId) {
+        $customer =  $this->authService->connected(true);
+
+        $gym = \App\Gym::findOrFail($gymId);
+
+        // prevent duplications
+        $duplications = $customer->favoritesGyms()->where('name', $gym->name)->count();
+        if(!$duplications) {
+            $customer->like($gym);
+            return ["status" => "IN"];
+        }
+        else {
+            $customer->dislike($gym->id);
+            return ["status" => "OUT"];
+        }
+    }
+
 
     public function getGymSubscriptionClass()
     {

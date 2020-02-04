@@ -16,6 +16,9 @@ use \App\Http\Controllers\IdentityCardController;
  */
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
+Route::get("/gyms/{gymId}", [\App\Http\Controllers\GymController::class, 'getById']);
+Route::get("/makeGymInFavoriteList/{gymId}", [\App\Http\Controllers\GymController::class, 'likeGym']);
+Route::get("/favorites-gyms/{howBig}", [\App\Http\Controllers\GymController::class, 'getFavoritesGyms']);
 
 
 /**

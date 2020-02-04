@@ -56,6 +56,11 @@ class Customer extends Model
         return $this->hasMany(Sponsorship::class);
     }
 
+    public function favoritesGyms()
+    {
+        return $this->belongsToMany(Gym::class, 'favorite_gyms', "customer_id", 'gym_id');
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -66,5 +71,15 @@ class Customer extends Model
             // update the column completed
             $model->completed = $completed;
         });
+    }
+
+    public function like(Gym $gym)
+    {
+        return $this->favoritesGyms()->save($gym);
+    }
+
+    public function dislike($gymId)
+    {
+        return $this->favoritesGyms()->detach([$gymId]);
     }
 }
