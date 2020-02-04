@@ -28,6 +28,6 @@ class CreateBase64ToPngsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('base64_to_pngs');
+        Schema::dropIfExists('base64ToPngs');
     }
 }

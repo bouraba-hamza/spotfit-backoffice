@@ -13,7 +13,7 @@ class CreateGymActivityTable extends Migration
      */
     public function up()
     {
-        Schema::create('gym_activity', function (Blueprint $table) {
+        Schema::create('gym_activities', function (Blueprint $table) {
             $table->integer('activity_id');
             $table->integer('gym_id');
         });
@@ -26,6 +26,6 @@ class CreateGymActivityTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gym_activity');
+        Schema::dropIfExists('gym_activities');
     }
 }

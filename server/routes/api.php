@@ -15,6 +15,8 @@ use \App\Http\Controllers\IdentityCardController;
 |
  */
 
+Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
+
 
 /**
  * Auth
@@ -231,6 +233,10 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
 
 });
 
+
+
+
+Route::get("/gym", "GymController@index");
 
 /**
  * Groups

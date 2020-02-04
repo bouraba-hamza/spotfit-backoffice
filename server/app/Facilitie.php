@@ -14,7 +14,6 @@ class Facilitie extends Model
         "icon",
         "name",
         "order",
-
     ];
 
     public function gyms()
