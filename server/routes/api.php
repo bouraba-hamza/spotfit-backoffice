@@ -27,7 +27,6 @@ Route::get("/gyms-cities", [\App\Http\Controllers\GymController::class, 'getCiti
 Route::post("/search", [\App\Http\Controllers\GymController::class, 'search']);
 Route::get("/classes", [\App\Http\Controllers\ClasseController::class, 'fetch']);
 
-
 /**
  * Auth
  */
@@ -35,12 +34,14 @@ Route::get('/me', 'AuthController@getAuthenticatedUser');
 Route::post('/login', 'AuthController@login');
 Route::post('/login/customer', [AuthController::class, 'authenticateCustomer']);
 Route::post('/logout', 'AuthController@logout');
-Route::get("/gymbyid/{gym_id}", "GymController@getSubscriptionTypeByGym");
+//Route::get("/gymbyid/{gym_id}", "GymController@getSubscriptionTypeByGym");
 Route::get("/gymSubscriptionClass", "GymController@getGymSubscriptionClass");
 
 Route::post("/createAcoount", "BanckAccountController@createAcoount");
 
 Route::post('/register', [CustomerController::class, 'storeclient']);
+
+// php storage link
 
 /**
  * PASSWORD
@@ -133,6 +134,8 @@ Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function () {
     Route::post('/gym', 'GymController@store');
     Route::post('/gym/{gym_id}', 'GymController@update');
     Route::get('/gym/{gym_id}', 'GymController@show');
+    Route::get("/gymbyid/{gym_id}", [\App\Http\Controllers\GymController::class, 'getSubscriptionTypeByGym']);
+
     //   Route::post('/gym/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
 
 
