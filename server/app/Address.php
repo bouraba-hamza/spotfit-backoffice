@@ -20,7 +20,7 @@ class Address extends Model
         'buildingNumber',
     ];
 
-    public function accountable()
+    public function addressable()
     {
         return $this->morphTo();
     }

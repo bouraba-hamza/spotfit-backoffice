@@ -12,19 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//        factory(App\Classes::class, 3)->create();
-//        factory(App\Subscription::class, 3)->create();
-
-
-        // Calling other seeders
-        $this->call([RolesAndPermissionsSeeder::class]);
-
-        // factory(App\Classe::class, 3)->create();
-        factory(App\Subscription::class, 3)->create();
-        factory(App\Customer::class, 10)->create();
-
         // Calling other seeders
        $this->call([RolesAndPermissionsSeeder::class]);
+       $this->call([GymsSeeder::class]);
 
        factory(\App\Account::class, 50)
            ->create()
@@ -41,6 +31,7 @@ class DatabaseSeeder extends Seeder
 
 
        // Fake user
-       \App\Account::first()->update(["username" => "@verify", "password" => "password", "disabled" => 0]);
+       \App\Account::where("accountable_type", "App\\Admin")->first()->update(["username" => "@verify", "disabled" => 0]);
+       \App\Account::where("accountable_type", "App\\Customer")->first()->update(["email" => "s1@spotfit.ma", "disabled" => 0]);
     }
 }

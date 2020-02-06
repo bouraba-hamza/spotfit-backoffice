@@ -4,11 +4,14 @@ namespace App;
 
 use App\Services\CustomerProfileCompleted;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Laravel\Cashier\Billable;
 
 class Customer extends Model
 {
-    use Billable;
+    use Billable, Notifiable;
 
     protected $with = ['address', 'account'];
 
@@ -56,6 +59,21 @@ class Customer extends Model
         return $this->hasMany(Sponsorship::class);
     }
 
+    public function activeSponsorshipsCodes()
+    {
+        return $this->hasMany(Sponsorship::class)->whereNotNull("date")->select("code");
+    }
+
+    public function inactiveSponsorshipsCodes()
+    {
+        return $this->hasMany(Sponsorship::class)->whereNull("date")->select("code");
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(GymRequests::class);
+    }
+
     public function favoritesGyms()
     {
         return $this->belongsToMany(Gym::class, 'favorite_gyms', "customer_id", 'gym_id');
@@ -71,6 +89,10 @@ class Customer extends Model
             // update the column completed
             $model->completed = $completed;
         });
+
+        self::created(function ($model) {
+            $model->sponsorships()->save(new Sponsorship(["date" => now(), "code" => Str::random(rand(6, 8))]));
+        });
     }
 
     public function like(Gym $gym)
@@ -81,5 +103,10 @@ class Customer extends Model
     public function dislike($gymId)
     {
         return $this->favoritesGyms()->detach([$gymId]);
+    }
+
+    public function routeNotificationForMail($notification)
+    {
+        return $this->account->email;
     }
 }

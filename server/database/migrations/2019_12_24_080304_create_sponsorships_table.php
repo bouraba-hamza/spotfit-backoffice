@@ -16,10 +16,10 @@ class CreateSponsorshipsTable extends Migration
         Schema::create('sponsorships', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('customer_id');
-            $table->integer('customer_subscription_id')->comment("Can't be ever for the same customer");
-            $table->float('amount')->comment("formula: (customer subscription price) * (sponsorship-rate / 100)");
-            $table->string('code');
-            $table->dateTime('date')->comment("coupon is active whenever date is not NULL");
+            $table->integer('customer_subscription_id')->comment("Can't be ever for the same customer")->nullable();
+            $table->float('amount')->comment("formula: (customer subscription price) * (sponsorship-rate / 100)")->nullable();
+            $table->string('code')->unique()->index();
+            $table->timestamp('date')->comment("coupon is active whenever date is not NULL")->nullable();
             $table->timestamps();
         });
     }

@@ -4,19 +4,19 @@
 namespace App\Http\Controllers;
 
 
-use App\Address;
-use App\GroupSubscriptionType;
 use App\Gym;
+use App\GymRequests;
 use App\GymSubscriptionType;
-use App\Services\AuthService;
-use App\Type;
-use App\Repositories\GymRepository;
 use App\Http\Requests\GymRequest;
-use Illuminate\Database\Query\Builder;
+use App\Repositories\GymRepository;
+use App\Services\AuthService;
+use App\Services\RequestGymPictureUploaderService;
+use App\Type;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Validator;
 use Illuminate\Support\Facades\Log;
+use Validator;
 
 class GymController extends Controller
 {
@@ -28,15 +28,22 @@ class GymController extends Controller
     private $gym;
 
     private $authService;
-
+    private $requestGymPictureUploaderService;
 
     /**
      * gymController constructor.
-     * @param GymRepository $GymRepository
+     * @param GymRepository $gymRepository
+     * @param AuthService $authService
+     * @param RequestGymPictureUploaderService $requestGymPictureUploaderService
      */
-    public function __construct(GymRepository $gymRepository, AuthService $authService)
+    public function __construct(
+        GymRepository $gymRepository,
+        AuthService $authService,
+        RequestGymPictureUploaderService $requestGymPictureUploaderService
+    )
     {
         $this->authService = $authService;
+        $this->requestGymPictureUploaderService = $requestGymPictureUploaderService;
         $this->gym = $gymRepository;
     }
 
@@ -58,6 +65,102 @@ class GymController extends Controller
     {
         return $this->gym->all();
     }
+
+    public function search(Request $request)
+    {
+//        dd($request->all());
+        $f = $request;
+        $gyms = \App\Gym::with([
+            'group:id,name',
+            'medal:id,name',
+            'address:addressable_id,id,formattedAddress,city,postcode,latitude,longitude',
+            'subscriptions' => function ($q) {
+                return $q->select(['gym_id', 'subscription_id', 'type_id', 'price'])
+                    ->with(
+                        [
+                            'subscription' => function ($q) {
+                                return $q->select(["id", "name", 'duration']);
+                            },
+                            'type' => function ($q) {
+                                return $q->select(["id", "name"]);
+                            }
+                        ]
+                    );
+            },
+            'activities',
+            'facilities',
+        ])->where(function (Builder $q) use ($f) {
+            if ($f->has("gyms") || $f->has("activities")) {
+                $ids = [];
+
+                if ($f->has("gyms")) {
+                    $ids = array_merge($ids, $f->get("gyms"));
+                }
+
+                if ($f->has("activities")) {
+                    $activities = \App\Activitie::with(["gyms:id"])->whereIn("id", $f->get("activities"))->get();
+                    foreach ($activities as $a) {
+                        foreach ($a->gyms as $g) {
+                            array_push($ids, $g->id);
+                        }
+                    }
+                }
+                $q->whereIn('id', $ids);
+            }
+
+            if ($f->has("cities")) {
+                $ids = [];
+                $addresses = [];
+                foreach ($f->get("cities") as $c) {
+                    array_push(
+                        $addresses,
+                        \App\Address::where("addressable_type", "App\\Gym")->where("city", 'like', '%' . $c . '%')->get("addressable_id")
+                    );
+                }
+
+                foreach ($addresses as $key => $a) {
+                    array_push($ids, $a->toArray()[0]["addressable_id"]);
+                }
+                $q->whereIn('id', $ids);
+            }
+
+            if ($f->has("facilities")) {
+                $ids = [];
+                $facilities = \App\Facilitie::with(["gyms:id"])->whereIn("id", $f->get("facilities"))->get();
+                foreach ($facilities as $a) {
+                    foreach ($a->gyms as $g) {
+                        array_push($ids, $g->id);
+                    }
+                }
+                $q->whereIn('id', $ids);
+            }
+
+            if ($f->has("classes")) {
+                $q->whereIn('class_id', $f->get("classes"));
+            }
+            if ($f->has("orderBy")) {
+                if ('quality' === strtolower($f->get("orderBy")[0])) {
+                    $q->where('rate', '>=', intval($f->get("args")["review"]));
+                }
+            }
+        })->get();
+        return $gyms;
+    }
+
+    public function getSponsorshipCode()
+    {
+        $customer = $this->authService->connected(true);
+        return $customer->activeSponsorshipsCodes->first();
+    }
+
+
+    public function getCities()
+    {
+        return \App\Address::where("addressable_type", "App\\Gym")->distinct()->get("city")->map(function ($city) {
+            return $city->city;
+        });
+    }
+
 
     public function fetch()
     {
@@ -108,8 +211,9 @@ class GymController extends Controller
         ])->where("id", $gymId)->first();
     }
 
-    public  function getFavoritesGyms($howBig = 'default') {
-        $customer =  $this->authService->connected(true);
+    public function getFavoritesGyms($howBig = 'default')
+    {
+        $customer = $this->authService->connected(true);
 
         /*$selectedColumns = ["id"];
         switch ($howBig) {
@@ -121,18 +225,18 @@ class GymController extends Controller
         return $customer->favoritesGyms()->with(['address:addressable_id,formattedAddress'])->orderBy("gym_id", "desc")->get();
     }
 
-    public function likeGym($gymId) {
-        $customer =  $this->authService->connected(true);
+    public function likeGym($gymId)
+    {
+        $customer = $this->authService->connected(true);
 
         $gym = \App\Gym::findOrFail($gymId);
 
         // prevent duplications
         $duplications = $customer->favoritesGyms()->where('name', $gym->name)->count();
-        if(!$duplications) {
+        if (!$duplications) {
             $customer->like($gym);
             return ["status" => "IN"];
-        }
-        else {
+        } else {
             $customer->dislike($gym->id);
             return ["status" => "OUT"];
         }
@@ -154,15 +258,30 @@ class GymController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function requestGym(Request $request)
     {
-        //
+        $data = $request->only((new GymRequests())->fillable);
+
+        $validator = Validator::make($data, [
+            'gymName' => 'required',
+            'address' => 'required',
+            'phoneNumber' => 'string',
+            'picture' => 'image|mimes:jpeg,png,jpg,bmp,gif,svg|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        if ($request->hasFile("picture")) {
+            $data["picture"] = $this->requestGymPictureUploaderService->store($request->file('picture'))["fakeName"];
+        }
+
+        $customer = $this->authService->connected(true);
+        return $customer->requests()->save(new GymRequests($data));
     }
+
 
     /**
      * Store a newly created resource in storage.

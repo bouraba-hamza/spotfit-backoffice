@@ -71,6 +71,11 @@ class ClasseController extends Controller
 
     }
 
+    public function fetch()
+    {
+        return $this->classe->all();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
