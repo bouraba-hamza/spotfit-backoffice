@@ -6,6 +6,8 @@ use App\customerSubscription;
 use App\CustomerSubscriptionStatus;
 use App\Http\Requests\CustomerRequest;
 use App\Repositories\CustomerRepository;
+use App\Services\AuthService;
+use App\Services\CustomerSubscriptionService;
 use App\Services\IdentityCardUploaderService;
 use App\Services\ProfileAvatarService;
 use Illuminate\Http\Request;
@@ -20,15 +22,22 @@ class CustomerController extends Controller
     protected $customer;
     protected $profileAvatarService;
     protected $identityCardUploaderService;
+    protected $customerSubscriptionService;
+
+    private $authService;
 
     public function __construct(
+        AuthService $authService,
         CustomerRepository $customerRepository,
         ProfileAvatarService $profileAvatarService,
-        IdentityCardUploaderService $identityCardUploaderService
+        IdentityCardUploaderService $identityCardUploaderService,
+        CustomerSubscriptionService $customerSubscriptionService
     ) {
         $this->customer = $customerRepository;
         $this->profileAvatarService = $profileAvatarService;
         $this->identityCardUploaderService = $identityCardUploaderService;
+        $this->authService = $authService;
+        $this->customerSubscriptionService = $customerSubscriptionService;
     }
 
     public function index()
@@ -208,7 +217,7 @@ class CustomerController extends Controller
 //                    'datetime' => now(),
 //                ]
 //            );
-//            $customerSubscription->statues()->attach([19 , $statusId]);
+//            $customerSubscription->statuses()->attach([19 , $statusId]);
 
 
 //            $payment = $user->charge(100, $paymentMethod);
@@ -408,5 +417,12 @@ class CustomerController extends Controller
         $this->customer->update($customer->id, $data);
 
         return ['customer_id' => $customer->id];
+    }
+
+    public function getSubscriptions() {
+        $customer = $this->authService->connected(true);
+
+        $subscriptions = $this->customerSubscriptionService->getCustomerSubscriptions($customer->id);
+        return response()->json($subscriptions);
     }
 }

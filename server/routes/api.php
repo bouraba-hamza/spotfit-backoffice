@@ -26,6 +26,7 @@ Route::get("/activities", [\App\Http\Controllers\ActivitieController::class, 'in
 Route::get("/gyms-cities", [\App\Http\Controllers\GymController::class, 'getCities']);
 Route::post("/search", [\App\Http\Controllers\GymController::class, 'search']);
 Route::get("/classes", [\App\Http\Controllers\ClasseController::class, 'fetch']);
+Route::get("/subscriptions", [\App\Http\Controllers\CustomerController::class, 'getSubscriptions']);
 
 /**
  * Auth
