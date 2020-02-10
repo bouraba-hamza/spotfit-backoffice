@@ -112,8 +112,9 @@ class AccountSeeder extends Seeder
         for ($i = 0; $i < $times; $i++) {
             $fakeSession = [
                 "qrcode" => $this->faker->uuid,
-                "gym_id" => 1,
-                "customer_subscription_id" => $customer_subscription_id
+                "gym_id" => App\Gym::inRandomOrder()->first()->id,
+                "customer_subscription_id" => $customer_subscription_id,
+                "date" => $this->faker->dateTime,
             ];
 
             array_push($sessions, $fakeSession);
@@ -122,19 +123,19 @@ class AccountSeeder extends Seeder
     }
 
     public function getRandomStatuses(int $howMany = 1) {
-        return App\Status::inRandomOrder()->take($howMany)->get();;
+        return App\Status::inRandomOrder()->take($howMany)->get();
     }
 
     public function getRandomGym(int $howMany = 1) {
-        return App\Gym::inRandomOrder()->take($howMany)->get();;
+        return App\Gym::inRandomOrder()->take($howMany)->get();
     }
 
     public function getRandomSubscription(int $howMany = 1) {
-        return App\Subscription::inRandomOrder()->take($howMany)->get();;
+        return App\Subscription::inRandomOrder()->take($howMany)->get();
     }
 
     public function getRandomType(int $howMany = 1) {
-        return App\Type::inRandomOrder()->take($howMany)->get();;
+        return App\Type::inRandomOrder()->take($howMany)->get();
     }
 
     public function getGymSubscriptionTypeRecord() {
