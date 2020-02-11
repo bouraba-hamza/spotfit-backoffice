@@ -16,6 +16,19 @@ use \App\Http\Controllers\IdentityCardController;
  */
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
+
+Route::get("/gyms/{gymId}", [\App\Http\Controllers\GymController::class, 'getById']);
+Route::get("/makeGymInFavoriteList/{gymId}", [\App\Http\Controllers\GymController::class, 'likeGym']);
+Route::get("/favorites-gyms/{howBig}", [\App\Http\Controllers\GymController::class, 'getFavoritesGyms']);
+Route::post("/request-gym", [\App\Http\Controllers\GymController::class, 'requestGym']);
+Route::get("/sponsorship-code", [\App\Http\Controllers\GymController::class, 'getSponsorshipCode']);
+Route::get("/facilities", [\App\Http\Controllers\FacilitieController::class, 'index']);
+Route::get("/activities", [\App\Http\Controllers\ActivitieController::class, 'index']);
+Route::get("/gyms-cities", [\App\Http\Controllers\GymController::class, 'getCities']);
+Route::post("/search", [\App\Http\Controllers\GymController::class, 'search']);
+Route::get("/classes", [\App\Http\Controllers\ClasseController::class, 'fetch']);
+Route::get("/subscriptions", [\App\Http\Controllers\CustomerController::class, 'getSubscriptions']);
+
 /**
  * Auth
  */

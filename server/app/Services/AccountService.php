@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class AccountService
 {
@@ -29,5 +30,12 @@ class AccountService
             $account->assignRole($role);
 
         return $role;
+    }
+    public static function customer($person)
+    {
+        if ($person instanceof \App\Customer)
+            return true;
+
+        return false;
     }
 }

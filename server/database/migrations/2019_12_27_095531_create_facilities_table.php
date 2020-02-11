@@ -17,7 +17,7 @@ class CreateFacilitiesTable extends Migration
             $table->bigIncrements('id');
             $table->string('icon');
             $table->string('name');
-            $table->integer('order');
+            $table->integer('order')->nullable();
             $table->timestamps();
         });
     }

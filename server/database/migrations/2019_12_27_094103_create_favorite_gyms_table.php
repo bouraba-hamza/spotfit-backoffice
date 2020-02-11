@@ -17,7 +17,6 @@ class CreateFavoriteGymsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('gym_id');
             $table->integer('customer_id');
-            $table->timestamps();
         });
     }
 

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 
 
 use App\Facilitie;
-use App\Repositories\FacilitieRepository;
 use App\Http\Requests\FacilitieRequest;
+use App\Repositories\FacilitieRepository;
 use App\Services\FacilitieService;
 use Illuminate\Http\Request;
 use Validator;

@@ -16,7 +16,6 @@ class CreateGymFacilitiesTable extends Migration
         Schema::create('gym_facilities', function (Blueprint $table) {
             $table->integer('gym_id');
             $table->integer('facility_id');
-            $table->timestamps();
         });
     }
 

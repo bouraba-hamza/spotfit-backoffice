@@ -18,7 +18,7 @@ class CreateSessionsTable extends Migration
             $table->text('qrcode');
             $table->integer('customer_subscription_id');
             $table->integer('gym_id');
-            $table->timestamps();
+            $table->timestamp('date')->useCurrent();
         });
     }
 

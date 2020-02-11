@@ -22,7 +22,7 @@ $factory->define(\App\Account::class, function (Faker $faker) {
         'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
-        'password' => bcrypt('password'),
+        'password' => 'password',
         'disabled' => $faker->randomElement([0, 1]),
         'accountable_type' => $accountableType,
         'accountable_id' => $accountable->id,

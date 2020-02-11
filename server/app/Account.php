@@ -14,10 +14,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Account extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use Notifiable, HasRoles;
+    use HasRoles;
     protected $guard_name = 'api';
-
-
 
     /**
      * The attributes that are mass assignable.
@@ -91,7 +89,9 @@ class Account extends Authenticatable implements JWTSubject, MustVerifyEmail
             AccountService::assignRole($model);
 
             // Send verification email to account inbox
-            // Mail::to($model->email)->later(1, new AccountCreated($model));
+            if(config('app.env') === 'production') {
+                 Mail::to($model->email)->later(1, new AccountCreated($model));
+            }
         });
     }
 }
