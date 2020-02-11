@@ -16,7 +16,6 @@ use \App\Http\Controllers\IdentityCardController;
  */
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
-
 /**
  * Auth
  */

@@ -9,6 +9,7 @@ import {Gym} from "@app/@core/models/gym";
 
 import { StarRatingComponent } from 'ng-starrating';
 import { Observable } from '../../../../../../node_modules/rxjs';
+import {environment} from "@env/environment";
 
 @Component({
   selector: "app-gym-list",
@@ -84,7 +85,10 @@ export class GymListComponent implements OnInit, AfterViewInit {
     this.gymService.findAll().subscribe();
   }
 
-
+  getGymLogo(fileName: string) {
+        const url = fileName ? `${environment.server_base_domain}/gyms/logos/${fileName}` : 'assets/img/room.png';
+        return url;
+  }
   
 
 
@@ -101,4 +105,3 @@ Unchecked Color: ${$event.starRating.uncheckedcolor}`);
 }
 
 
- 
