@@ -23,7 +23,7 @@ class Account extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array
      */
     public $fillable = [
-        'username', 'email', 'disabled', 'lastLogin'
+        'username', 'email', 'password', 'disabled', 'lastLogin'
     ];
 
     /**

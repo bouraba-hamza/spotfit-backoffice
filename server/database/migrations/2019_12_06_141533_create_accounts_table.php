@@ -19,7 +19,7 @@ class CreateAccountsTable extends Migration
             $table->string('username')->unique()->nullable();;
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();;
             $table->smallInteger('disabled')->default(0);
             $table->dateTime('lastLogin')->nullable();
             $table->unsignedInteger("accountable_id");
