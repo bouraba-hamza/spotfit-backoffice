@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\customerSubscription;
-use App\CustomerSubscriptionStatus;
 use App\Http\Requests\CustomerRequest;
 use App\Repositories\CustomerRepository;
 use App\Services\AuthService;
@@ -11,11 +10,10 @@ use App\Services\CustomerSubscriptionService;
 use App\Services\IdentityCardUploaderService;
 use App\Services\ProfileAvatarService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use JWTAuth;
 use Stripe\Transfer;
 use Validator;
-use JWTAuth;
 
 class CustomerController extends Controller
 {
@@ -32,7 +30,8 @@ class CustomerController extends Controller
         ProfileAvatarService $profileAvatarService,
         IdentityCardUploaderService $identityCardUploaderService,
         CustomerSubscriptionService $customerSubscriptionService
-    ) {
+    )
+    {
         $this->customer = $customerRepository;
         $this->profileAvatarService = $profileAvatarService;
         $this->identityCardUploaderService = $identityCardUploaderService;
@@ -50,7 +49,7 @@ class CustomerController extends Controller
 
 //        get current Account
         $account = \JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
 
         $customer = $account->accountable()->first();
@@ -79,7 +78,7 @@ class CustomerController extends Controller
 //        $customer = $this->customer->find($customer_id);
 
         $account = \JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
 
         $customer = $account->accountable()->first();
@@ -113,25 +112,25 @@ class CustomerController extends Controller
 //        $customer = $request->customer();
 
         $account = \JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
 
         $customer = $account->accountable()->first();
 
         $methods = array();
 
-            foreach ($customer->paymentMethods() as $method) {
+        foreach ($customer->paymentMethods() as $method) {
 //                Log::info($method);
 
-                array_push($methods, [
-                    'id' => $method->id,
-                    'brand' => $method->card->brand,
-                    'last_four' => $method->card->last4,
-                    'exp_month' => $method->card->exp_month,
-                    'exp_year' => $method->card->exp_year,
-                    'fingerprint' => $method->card->fingerprint,
-                ]);
-            }
+            array_push($methods, [
+                'id' => $method->id,
+                'brand' => $method->card->brand,
+                'last_four' => $method->card->last4,
+                'exp_month' => $method->card->exp_month,
+                'exp_year' => $method->card->exp_year,
+                'fingerprint' => $method->card->fingerprint,
+            ]);
+        }
 
 
         return response()->json($methods);
@@ -140,7 +139,7 @@ class CustomerController extends Controller
     public function removePaymentMethod(Request $request)
     {
         $account = \JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
 
         $customer = $account->accountable()->first();
@@ -165,17 +164,16 @@ class CustomerController extends Controller
 
         $customer = $account->accountable()->first();
         $customerSubscription = customerSubscription::where('customer_id', $customer->id)
-        ->get();
+            ->get();
 
         return $customerSubscription;
     }
 
 
-
     public function updateSubscription(Request $request)
     {
         $account = \JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
 
         $customer = $account->accountable()->first();
@@ -193,7 +191,7 @@ class CustomerController extends Controller
 
         try {
 //            20000 equivalent a 200 dh because stripe take all amount as a cent so 2000 cent /100 => ? dh
-            $stripeCharge = $customer->charge(39999,$paymentID);
+            $stripeCharge = $customer->charge(39999, $paymentID);
 
 //        group_subscription_id
 //        customer_id
@@ -243,7 +241,8 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function transfert(){
+    public function transfert()
+    {
         // Create a Transfer to a connected account (later):
 
         $account = \Stripe\Account::create([
@@ -324,9 +323,9 @@ class CustomerController extends Controller
     public function editProfile(Request $request)
     {
         $account = JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
-        $customer =  $account->accountable()->first();
+        $customer = $account->accountable()->first();
 
         $data = $request->all();
 
@@ -355,9 +354,10 @@ class CustomerController extends Controller
         return ['customer_id' => $customer->id];
     }
 
-    public function becomeAmbassador(Request $request, $customer_id, $promote) {
+    public function becomeAmbassador(Request $request, $customer_id, $promote)
+    {
         $customer = $this->customer->find($customer_id);
-        if(!$customer) abort(404);
+        if (!$customer) abort(404);
 
         $customer->update(["ambassador" => $promote]);
 
@@ -377,16 +377,17 @@ class CustomerController extends Controller
     }
 
 
-    public function uploadIdentityCard(Request $request) {
+    public function uploadIdentityCard(Request $request)
+    {
         // \Log::info($request->all());
 
         $data = $request->all();
 
         // apply validation rules
         $validator = Validator::make($data, [
-            'IDF'=> 'image|max:2048',
-            'IDB'=> 'image|max:2048',
-            'SELFIE'=> 'image|max:2048',
+            'IDF' => 'image|max:2048',
+            'IDB' => 'image|max:2048',
+            'SELFIE' => 'image|max:2048',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()]);
@@ -394,9 +395,9 @@ class CustomerController extends Controller
 
         // retrieve the customer
         $account = JWTAuth::parseToken()->authenticate();
-        if(!$account)
+        if (!$account)
             abort(404);
-        $customer =  $account->accountable()->first();
+        $customer = $account->accountable()->first();
 
         // upload the files to SPOTFIT storage
 
@@ -419,10 +420,26 @@ class CustomerController extends Controller
         return ['customer_id' => $customer->id];
     }
 
-    public function getSubscriptions() {
+    public function getSubscriptions()
+    {
         $customer = $this->authService->connected(true);
 
         $subscriptions = $this->customerSubscriptionService->getCustomerSubscriptions($customer->id);
         return response()->json($subscriptions);
     }
+
+    public function getNotifications()
+    {
+        $customer = $this->authService->connected(true);
+        if (!$customer)
+            return;
+
+        return response()->json($customer->notifications()->orderBy("data->datetime", "desc")->get(["id", "data"])->map(function ($notification) {
+            $n = json_decode($notification->data);
+            $n->id = $notification->id;
+            return $n;
+        }));
+    }
+
+
 }

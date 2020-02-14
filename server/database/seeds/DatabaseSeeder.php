@@ -16,10 +16,6 @@ class DatabaseSeeder extends Seeder
        $this->call([RolesAndPermissionsSeeder::class]);
        $this->call([GymsSeeder::class]);
        $this->call([AccountSeeder::class]);
-
-
-        // Settings
-       \App\Setting::insert(["key" => "sponsorship-rate", "value" => 0]);
-       \App\Setting::insert(["key" => "ambassador-sponsorship-rate", "value" => 10]);
+       $this->call([SettingSeeder::class]);
     }
 }

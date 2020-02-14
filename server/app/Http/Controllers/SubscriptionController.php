@@ -138,4 +138,10 @@ class SubscriptionController extends Controller
         return ['status' => 'success', 'deleted_resource_id' => $subscription];
 
     }
+
+    public function getEverywherePassPrices() {
+        return response()->json(json_decode(\DB::table('settings')
+            ->where('key', 'spotfit_everywhere_pass')
+            ->first()->value));
+    }
 }

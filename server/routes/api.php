@@ -27,6 +27,8 @@ Route::get("/gyms-cities", [\App\Http\Controllers\GymController::class, 'getCiti
 Route::post("/search", [\App\Http\Controllers\GymController::class, 'search']);
 Route::get("/classes", [\App\Http\Controllers\ClasseController::class, 'fetch']);
 Route::get("/subscriptions", [\App\Http\Controllers\CustomerController::class, 'getSubscriptions']);
+Route::get("/everywhere-subscription-prices", [\App\Http\Controllers\SubscriptionController::class, 'getEverywherePassPrices']);
+Route::get("/notifications", [\App\Http\Controllers\CustomerController::class, 'getNotifications']);
 
 /**
  * Auth
