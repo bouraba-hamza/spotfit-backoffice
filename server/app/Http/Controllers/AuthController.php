@@ -12,6 +12,33 @@ use phpDocumentor\Reflection\Types\Boolean;
 
 class AuthController extends Controller
 {
+
+    public function SigninWithGoogle(Request $request){
+
+        $credentials = $request->only('email', 'uid');
+
+        $account = Account::where("email", "=", trim($credentials["email"] ?? NULL))->first();
+
+        if (!$account) {
+            return ["new_account" => ["yes"]];
+        }
+
+        try {
+            $token = JWTAuth::fromUser($account);
+        } catch (JWTException $e) {
+            return response()->json(['errors' => ["Impossible de générer Impossible de créer un clé d'authentification"]]);
+        }
+
+        // who is the owner
+        $account_owner = $account->accountable()->first();
+
+        // mark this pass
+        $account->update(["lastLogin" => now()]);
+
+        // reformat the response
+        $account_owner["jwtToken"] = $this->formatToken($token);
+        return $account_owner;
+    }
     public function login(Request $request, $emailVerification = true)
     {
         $credentials = $request->only('username', 'password', 'email');

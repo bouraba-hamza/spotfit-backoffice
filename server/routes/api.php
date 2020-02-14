@@ -16,6 +16,7 @@ use \App\Http\Controllers\IdentityCardController;
  */
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
+
 Route::get("/gyms/{gymId}", [\App\Http\Controllers\GymController::class, 'getById']);
 Route::get("/makeGymInFavoriteList/{gymId}", [\App\Http\Controllers\GymController::class, 'likeGym']);
 Route::get("/favorites-gyms/{howBig}", [\App\Http\Controllers\GymController::class, 'getFavoritesGyms']);
@@ -36,6 +37,7 @@ Route::get("/notifications", [\App\Http\Controllers\CustomerController::class, '
 Route::get('/me', 'AuthController@getAuthenticatedUser');
 Route::post('/login', 'AuthController@login');
 Route::post('/login/customer', [AuthController::class, 'authenticateCustomer']);
+Route::post('/login/customersignInMethod', [AuthController::class, 'SigninWithGoogle']);
 Route::post('/logout', 'AuthController@logout');
 //Route::get("/gymbyid/{gym_id}", "GymController@getSubscriptionTypeByGym");
 Route::get("/gymSubscriptionClass", "GymController@getGymSubscriptionClass");
@@ -43,6 +45,7 @@ Route::get("/gymSubscriptionClass", "GymController@getGymSubscriptionClass");
 Route::post("/createAcoount", "BanckAccountController@createAcoount");
 
 Route::post('/register', [CustomerController::class, 'storeclient']);
+Route::post('/registerSignInMethod', [CustomerController::class, 'storeClientFromSignInMethod']);
 
 // php storage link
 

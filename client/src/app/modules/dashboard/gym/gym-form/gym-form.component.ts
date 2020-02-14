@@ -261,7 +261,7 @@ export class GymFormComponent implements OnInit {
         this.guid = Guid.create(); // ==> b77d409a-10cd-4a47-8e94-b0cd0ab50aa1
         this.gymForm.get('qrcode').setValue(this.guid + '');
 
-        this.imagePath = 'http://developers.ma/uploads/img/illustration-icone.jpg';
+        this.imagePath = 'http://167.99.174.126/uploads/img/illustration-icone.jpg';
     }
 
     ngOnInit() {

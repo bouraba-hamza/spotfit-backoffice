@@ -2,9 +2,11 @@
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
+export const server_base_domain = 'http://167.99.174.126';
 
 export const environment = {
   production: false,
-  env: 'http://developers.ma',
-  api_url: 'http://developers.ma/api'
+  env: server_base_domain,
+  api_url: `${server_base_domain}/api`,
+  server_base_domain,
 };

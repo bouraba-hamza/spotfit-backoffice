@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Account;
 use App\customerSubscription;
 use App\Http\Requests\CustomerRequest;
 use App\Repositories\CustomerRepository;
@@ -368,12 +369,43 @@ class CustomerController extends Controller
     {
         // filter unwanted inputs from request
         $customer = $request->all();
+        $name = $request->input('uid');
 
+        Log::info($name);
         // create customer account
         $customer = $this->customer->insert($customer);
-
         // return the resource just created
         return $this->customer->findBy("id", $customer->id);
+    }
+
+    public function storeClientFromSignInMethod(Request $request)
+    {
+        $customerinfo = $request->all();
+
+        // create customer account
+        $customer = $this->customer->insert($customerinfo);
+
+        // get token from client authenticated
+        $account = Account::where("email", "=", trim($customerinfo["email"] ?? NULL))->first();
+
+        $token = JWTAuth::fromUser($account);
+
+        // mark this pass
+        $account->update(["lastLogin" => now()]);
+
+        // reformat the response
+        $customer["jwtToken"] = $this->formatToken($token);
+        return $customer;
+
+    }
+
+    private function formatToken($token)
+    {
+        return [
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+        ];
     }
 
 
