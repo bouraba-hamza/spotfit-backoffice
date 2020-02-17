@@ -369,9 +369,7 @@ class CustomerController extends Controller
     {
         // filter unwanted inputs from request
         $customer = $request->all();
-        $name = $request->input('uid');
 
-        Log::info($name);
         // create customer account
         $customer = $this->customer->insert($customer);
         // return the resource just created
@@ -394,7 +392,7 @@ class CustomerController extends Controller
         $account->update(["lastLogin" => now()]);
 
         // reformat the response
-        $customer["jwtToken"] = $this->formatToken($token);
+        $account["jwtToken"] = $this->formatToken($token);
         return $customer;
 
     }
