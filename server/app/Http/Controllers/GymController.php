@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use phpDocumentor\Reflection\Types\Boolean;
 use Validator;
 
 class GymController extends Controller
@@ -68,7 +69,6 @@ class GymController extends Controller
 
     public function search(Request $request)
     {
-//        dd($request->all());
         $f = $request;
         $gyms = \App\Gym::with([
             'group:id,name',
@@ -89,62 +89,90 @@ class GymController extends Controller
             },
             'activities',
             'facilities',
-        ])->where(function (Builder $q) use ($f) {
-            if ($f->has("gyms") || $f->has("activities")) {
-                $ids = [];
+        ])->where(
+            function (Builder $q) use ($f) {
+                if ($f->has("gyms") || $f->has("activities")) {
+                    $ids = [];
 
-                if ($f->has("gyms")) {
-                    $ids = array_merge($ids, $f->get("gyms"));
+                    if ($f->has("gyms")) {
+                        $ids = array_merge($ids, $f->get("gyms"));
+                    }
+
+                    if ($f->has("activities")) {
+                        $activities = \App\Activitie::with(["gyms:id"])->whereIn("id", $f->get("activities"))->get();
+                        foreach ($activities as $a) {
+                            foreach ($a->gyms as $g) {
+                                array_push($ids, $g->id);
+                            }
+                        }
+                    }
+                    $q->whereIn('id', $ids);
                 }
 
-                if ($f->has("activities")) {
-                    $activities = \App\Activitie::with(["gyms:id"])->whereIn("id", $f->get("activities"))->get();
-                    foreach ($activities as $a) {
+                if ($f->has("cities")) {
+                    $ids = [];
+                    $addresses = [];
+                    foreach ($f->get("cities") as $c) {
+                        array_push(
+                            $addresses,
+                            \App\Address::where("addressable_type", "App\\Gym")->where("city", 'like', '%' . $c . '%')->get("addressable_id")
+                        );
+                    }
+
+                    foreach ($addresses as $key => $a) {
+                        array_push($ids, $a->toArray()[0]["addressable_id"]);
+                    }
+                    $q->whereIn('id', $ids);
+                }
+
+                if ($f->has("facilities")) {
+                    $ids = [];
+                    $facilities = \App\Facilitie::with(["gyms:id"])->whereIn("id", $f->get("facilities"))->get();
+                    foreach ($facilities as $a) {
                         foreach ($a->gyms as $g) {
                             array_push($ids, $g->id);
                         }
                     }
-                }
-                $q->whereIn('id', $ids);
-            }
-
-            if ($f->has("cities")) {
-                $ids = [];
-                $addresses = [];
-                foreach ($f->get("cities") as $c) {
-                    array_push(
-                        $addresses,
-                        \App\Address::where("addressable_type", "App\\Gym")->where("city", 'like', '%' . $c . '%')->get("addressable_id")
-                    );
+                    $q->whereIn('id', $ids);
                 }
 
-                foreach ($addresses as $key => $a) {
-                    array_push($ids, $a->toArray()[0]["addressable_id"]);
+                if ($f->has("classes")) {
+                    $q->whereIn('class_id', $f->get("classes"));
                 }
-                $q->whereIn('id', $ids);
-            }
-
-            if ($f->has("facilities")) {
-                $ids = [];
-                $facilities = \App\Facilitie::with(["gyms:id"])->whereIn("id", $f->get("facilities"))->get();
-                foreach ($facilities as $a) {
-                    foreach ($a->gyms as $g) {
-                        array_push($ids, $g->id);
+                if ($f->has("orderBy")) {
+                    if ('quality' === strtolower($f->get("orderBy")[0])) {
+                        $q->where('rate', '>=', intval($f->get("args")["review"]));
                     }
                 }
-                $q->whereIn('id', $ids);
             }
+        );
 
-            if ($f->has("classes")) {
-                $q->whereIn('class_id', $f->get("classes"));
+
+        $subscriptions = $f->get("subscriptions");
+        if ($this->arrayOfNumbers($subscriptions)) {
+            $gyms->whereHas("subscriptions.subscription", function (\Illuminate\Database\Eloquent\Builder $q) use ($subscriptions) {
+                $q->whereIn('id', $subscriptions);
+            });
+        }
+
+        return $gyms->get();
+    }
+
+    public function arrayOfNumbers($array): bool {
+        $isArrayOfNumber = true;
+        if(!is_array($array))
+            $isArrayOfNumber = false;
+
+        if(!$array || !count($array))
+            $isArrayOfNumber = false;
+        else {
+            foreach ($array as $i) {
+                if(!intval($i))
+                    $isArrayOfNumber = false;
             }
-            if ($f->has("orderBy")) {
-                if ('quality' === strtolower($f->get("orderBy")[0])) {
-                    $q->where('rate', '>=', intval($f->get("args")["review"]));
-                }
-            }
-        })->get();
-        return $gyms;
+        }
+
+        return $isArrayOfNumber;
     }
 
     public function getSponsorshipCode()
@@ -401,7 +429,7 @@ class GymController extends Controller
             ->Join('classes', 'classes.id', '=', 'gyms.class_id')
             ->Join('subscriptions', 'subscriptions.id', '=', 'gym_subscription_types.subscription_id')
             ->Join('types', 'types.id', '=', 'gym_subscription_types.type_id')
-            ->select('subscriptions.name as name','types.name  as regime','gym_subscription_types.*', 'classes.name as classname')
+            ->select('subscriptions.name as name', 'types.name  as regime', 'gym_subscription_types.*', 'classes.name as classname')
             ->get();
 
 

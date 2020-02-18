@@ -30,6 +30,7 @@ Route::get("/classes", [\App\Http\Controllers\ClasseController::class, 'fetch'])
 Route::get("/subscriptions", [\App\Http\Controllers\CustomerController::class, 'getSubscriptions']);
 Route::get("/everywhere-subscription-prices", [\App\Http\Controllers\SubscriptionController::class, 'getEverywherePassPrices']);
 Route::get("/notifications", [\App\Http\Controllers\CustomerController::class, 'getNotifications']);
+Route::get("/plans", [\App\Http\Controllers\SubscriptionController::class, 'index']);
 
 /**
  * Auth

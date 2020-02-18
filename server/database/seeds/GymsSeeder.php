@@ -75,7 +75,7 @@ class GymsSeeder extends Seeder
         DB::table('addresses')->where("addressable_type",  "App\\Gym")->delete();
 
         $i = 0;
-        factory(\App\Gym::class, 17)
+        factory(\App\Gym::class, 200)
             ->create()
             ->each(function ($gym) use (&$i) {
                 $i++;
@@ -106,24 +106,30 @@ class GymsSeeder extends Seeder
                 \App\Type::all()->each(function ($type) use ($gym) {
                     switch ($type->name) {
                         case 'strict':
-                            \App\Subscription::all()->each(function ($subscription) use ($gym, $type) {
-                                \App\GymSubscriptionType::create([
+                            $gst1 = [];
+                            \App\Subscription::all()->each(function ($subscription) use ($gym, $type, &$gst1) {
+                                $gst1[] = [
                                     "gym_id" => $gym->id,
                                     "subscription_id" => $subscription->id,
                                     "type_id" => $type->id,
                                     "price" => $this->faker->numberBetween(40, 700)
-                                ]);
+                                ];
                             });
+
+                            foreach ($this->faker->randomElements($gst1, rand(2, 3)) as $el) {
+                                \App\GymSubscriptionType::create($el);
+                            }
+
                             break;
                         case 'everywhere':
-                            \App\Subscription::where('duration', 30)->each(function ($subscription) use ($gym, $type) {
+                            /*\App\Subscription::where('duration', 30)->each(function ($subscription) use ($gym, $type) {
                                 \App\GymSubscriptionType::create([
                                     "gym_id" => $gym->id,
                                     "subscription_id" => $subscription->id,
                                     "type_id" => $type->id,
                                     "price" => $this->faker->numberBetween(40, 700)
                                 ]);
-                            });
+                            });*/
                             break;
                     }
                 });
