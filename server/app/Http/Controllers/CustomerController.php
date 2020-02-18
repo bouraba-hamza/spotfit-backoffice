@@ -391,11 +391,6 @@ class CustomerController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()]);
         }
-        if ($request->hasFile("avatar")) {
-            $data["avatar"] = $this->profileAvatarService->update($customer->avatar, $request->file("avatar"))["fakeName"];
-        }
-
-        $this->customer->update($customer->id, $data);
         // get token from client authenticated
         $account = Account::where("email", "=", trim($customerinfo["email"] ?? NULL))->first();
 
