@@ -382,11 +382,10 @@ class CustomerController extends Controller
         Log::info($customerinfo);
 
         // create customer account
-        $customer = $this->customer->insert($customerinfo);
+        $customer = $this->customer->insertfromsigninmethod($customerinfo);
 
         $validator = Validator::make($customerinfo, [
             'username' => 'required',
-            'avatar' => 'image',
         ], CustomerRequest::VALIDATION_MESSAGES);
 
         if ($validator->fails()) {
