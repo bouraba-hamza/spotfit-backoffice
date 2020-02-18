@@ -36,8 +36,10 @@ Route::get("/notifications", [\App\Http\Controllers\CustomerController::class, '
  */
 Route::get('/me', 'AuthController@getAuthenticatedUser');
 Route::post('/login', 'AuthController@login');
+Route::get('/getwhatsapp', 'AuthController@getWhatsapp');
 Route::post('/login/customer', [AuthController::class, 'authenticateCustomer']);
 Route::post('/login/customersignInMethod', [AuthController::class, 'SigninWithGoogle']);
+Route::post('/login/customersignInMethodTwitter', [AuthController::class, 'SigninWithtwitter']);
 Route::post('/logout', 'AuthController@logout');
 //Route::get("/gymbyid/{gym_id}", "GymController@getSubscriptionTypeByGym");
 Route::get("/gymSubscriptionClass", "GymController@getGymSubscriptionClass");

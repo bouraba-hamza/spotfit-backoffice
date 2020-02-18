@@ -16,10 +16,10 @@ class CreateAccountsTable extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('parent_account')->nullable();
-            $table->string('username')->unique()->nullable();;
-            $table->string('email')->unique();
+            $table->string('username')->unique()->nullable();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable();;
+            $table->string('password')->nullable();
             $table->smallInteger('disabled')->default(0);
             $table->dateTime('lastLogin')->nullable();
             $table->unsignedInteger("accountable_id");

@@ -13,6 +13,46 @@ use phpDocumentor\Reflection\Types\Boolean;
 class AuthController extends Controller
 {
 
+
+    public function getWhatsapp(){
+
+//        $phone = $request->query('phone');
+//        $text = $request->query('text');
+        header("Location: whatsapp://send?phone=212624019136&text=Bonjour,%20je%20voudrais%20plus%20d’informations%20concernant%20votre%20application%20spotfi");
+//        exit();
+//        return redirect()->to('whatsapp://send?phone=212624019136&text=Bonjour,%20je%20voudrais%20plus%20d’informations%20concernant%20votre%20application%20spotfi')->send();
+//        return ["success" => ["les informations d'identification valides: "]];
+
+    }
+    public function SigninWithTwitter(Request $request){
+
+        $credentials = $request->all();
+
+        Log::info($credentials);
+
+        $account = Account::where("username", "=", trim($credentials["username"] ?? NULL))->first();
+
+        if (!$account) {
+            return ["new_account" => ["yes"]];
+        }
+
+        try {
+            $token = JWTAuth::fromUser($account);
+        } catch (JWTException $e) {
+            return response()->json(['errors' => ["Impossible de générer Impossible de créer un clé d'authentification"]]);
+        }
+
+        // who is the owner
+        $account_owner = $account->accountable()->first();
+
+        // mark this pass
+        $account->update(["lastLogin" => now()]);
+
+        // reformat the response
+        $account_owner["jwtToken"] = $this->formatToken($token);
+        return $account_owner;
+    }
+
     public function SigninWithGoogle(Request $request){
 
         $credentials = $request->only('email', 'uid');
@@ -39,6 +79,7 @@ class AuthController extends Controller
         $account_owner["jwtToken"] = $this->formatToken($token);
         return $account_owner;
     }
+
     public function login(Request $request, $emailVerification = true)
     {
         $credentials = $request->only('username', 'password', 'email');

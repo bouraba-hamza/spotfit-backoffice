@@ -320,7 +320,6 @@ class CustomerController extends Controller
         return ['customer_id' => $customer_id];
     }
 
-
     public function editProfile(Request $request)
     {
         $account = JWTAuth::parseToken()->authenticate();
@@ -380,9 +379,24 @@ class CustomerController extends Controller
     {
         $customerinfo = $request->all();
 
+        Log::info($customerinfo);
+
         // create customer account
         $customer = $this->customer->insert($customerinfo);
 
+        $validator = Validator::make($customerinfo, [
+            'username' => 'required',
+            'avatar' => 'image',
+        ], CustomerRequest::VALIDATION_MESSAGES);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+        if ($request->hasFile("avatar")) {
+            $data["avatar"] = $this->profileAvatarService->update($customer->avatar, $request->file("avatar"))["fakeName"];
+        }
+
+        $this->customer->update($customer->id, $data);
         // get token from client authenticated
         $account = Account::where("email", "=", trim($customerinfo["email"] ?? NULL))->first();
 
