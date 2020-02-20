@@ -25,7 +25,7 @@ class CreateCustomersTable extends Migration
             $table->string('IDF')->nullable();
             $table->string('IDB')->nullable();
             $table->string('jobTitle')->nullable();
-            $table->string('avatar')->nullable();
+            $table->longText('avatar')->nullable();
             $table->tinyInteger('completed')
                 ->default(0)
                 ->comment("will be 1 if the customer provides us gender/firstName/lastName/birthDay/phoneNumber/idF/idB");

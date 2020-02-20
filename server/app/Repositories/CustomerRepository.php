@@ -51,4 +51,15 @@ class CustomerRepository extends BaseRepository
         $customer->account()->save($account);
         return $customer;
     }
+
+    public function insertfromsigninmethod(array $args)
+    {
+        // create a empty customer
+        $customer = parent::insert(["qrcode" => (string)Str::uuid(),"avatar" => $args['avatar'], "firstName" => $args['firstName'] ,"lastName" => $args['lastName'] ]);
+
+        // account for to access the app
+        $account = new \App\Account($args);
+        $customer->account()->save($account);
+        return $customer;
+    }
 }
