@@ -75,7 +75,7 @@ class GymsSeeder extends Seeder
         DB::table('addresses')->where("addressable_type",  "App\\Gym")->delete();
 
         $i = 0;
-        factory(\App\Gym::class, 200)
+        factory(\App\Gym::class, 20)
             ->create()
             ->each(function ($gym) use (&$i) {
                 $i++;

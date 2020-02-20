@@ -1,20 +1,20 @@
 <svg viewBox="0 0 63 55.73" xmlns="http://www.w3.org/2000/svg"><title>f6</title>
   <g id="b9d7e841-d871-4cb3-aa4c-d92c6eaecd70">
     <g id="f93cc0fb-5171-4b0c-807a-d74c62de9cf4">
-      <line style="fill:none;stroke:#747795;stroke-miterlimit:10;stroke-width:2.5px" x1="5.19" x2="5.19" y1="50.12"
+      <line style="fill:none;stroke:#7e7d91;stroke-miterlimit:10;stroke-width:2.5px" x1="5.19" x2="5.19" y1="50.12"
             y2="7.3"/>
-      <line style="fill:none;stroke:#747795;stroke-miterlimit:10;stroke-width:2.5px" x1="57.81" x2="57.81" y1="7.3"
+      <line style="fill:none;stroke:#7e7d91;stroke-miterlimit:10;stroke-width:2.5px" x1="57.81" x2="57.81" y1="7.3"
             y2="54.16"/>
       <polyline points="8.35 6.91 2.06 6.91 2.06 1.25 60.94 1.25 60.94 6.91 17.4 6.91"
-                style="fill:none;stroke:#747795;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px"/>
+                style="fill:none;stroke:#7e7d91;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px"/>
       <path
         d="M27.34,31a14.82,14.82,0,0,1,3.14-4.93C29.06,34.53,35,38.4,35,38.4s4.18-2.21,4.49-4.52c0,0,5.58,9.79,2.71,15.15"
-        style="fill:none;stroke:#747795;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px"/>
+        style="fill:none;stroke:#7e7d91;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px"/>
       <path d="M27.84,42.42a15.63,15.63,0,0,0-4.69-8.61A7.29,7.29,0,0,1,22,41s-3.19,3.8-1.1,8.06"
-            style="fill:none;stroke:#747795;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px"/>
+            style="fill:none;stroke:#7e7d91;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px"/>
       <path d="M14,50.12V34.24a17.56,17.56,0,0,1,35.12,0V54.16"
-            style="fill:none;stroke:#747795;stroke-miterlimit:10;stroke-width:2.5px"/>
-      <line style="fill:none;stroke:#747795;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px" x1="1.25"
+            style="fill:none;stroke:#7e7d91;stroke-miterlimit:10;stroke-width:2.5px"/>
+      <line style="fill:none;stroke:#7e7d91;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.5px" x1="1.25"
             x2="61.75" y1="54.48"
             y2="54.48"/>
     </g>
