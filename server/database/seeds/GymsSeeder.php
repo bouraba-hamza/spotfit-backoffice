@@ -37,7 +37,6 @@ class GymsSeeder extends Seeder
             ["name" => "Day Pass", "duration" => 1, "description" => $this->faker->text(70)],
             ["name" => "Year Pass", "duration" => 365, "description" => $this->faker->text(70)],
             ["name" => "Month Pass", "duration" => 30, "description" => $this->faker->text(70)],
-            ["name" => "Week Pass", "duration" => 7, "description" => $this->faker->text(70)],
         ];
 
         \App\Subscription::insert($subscriptions);
