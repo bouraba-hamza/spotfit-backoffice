@@ -86,6 +86,8 @@ Route::group(['prefix' => 'v1', 'middleware' => [/* 'jwt' , /* 'jwt.refresh' */]
     Route::get('/customer/payment-methods', 'CustomerController@getPaymentMethods');
     Route::post('/customer/remove-payment', 'CustomerController@removePaymentMethod');
     Route::put('/customer/subscription', 'CustomerController@updateSubscription');
+    Route::put('/customer/subscription-pay', 'CustomerController@payfromCashbinga');
+
 });
 
 /**
