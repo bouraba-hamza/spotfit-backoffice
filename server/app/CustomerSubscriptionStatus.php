@@ -3,8 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class CustomerSubscriptionStatus extends Model
+class CustomerSubscriptionStatus extends Pivot
 {
     //
     protected $fillable=[

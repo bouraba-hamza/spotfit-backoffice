@@ -3,8 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Model;
 
-class CustomerSubscription extends Pivot
+class CustomerSubscription extends Model
 {
 
     /*protected $with = [
@@ -12,6 +13,7 @@ class CustomerSubscription extends Pivot
         "type",
         "subscription",
     ];*/
+    protected $table = "customer_subscription";
 
     protected $fillable = [
         "customer_id",

@@ -29,7 +29,7 @@ class CustomerSubscriptionService
     public function getCustomerSubscriptions($customerId)
     {
         return DB::table("customers as c")
-            ->selectRaw("cs.id, cs.consumed_at as consumption_date, t.name as type, ss.duration,
+            ->selectRaw("cs.id, cs.consumed_at as consumption_date, cs.qrcode as qrcode, t.name as type, ss.duration,
             (SELECT s.name FROM statuses s
             LEFT JOIN customer_subscription_statuses css ON css.status_id = s.id
             WHERE css.customer_subscription_id = cs.id

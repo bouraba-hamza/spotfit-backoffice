@@ -11,7 +11,9 @@ use App\Services\CustomerSubscriptionService;
 use App\Services\IdentityCardUploaderService;
 use App\Services\ProfileAvatarService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use JWTAuth;
 use Stripe\Transfer;
 use Validator;
@@ -22,7 +24,6 @@ class CustomerController extends Controller
     protected $profileAvatarService;
     protected $identityCardUploaderService;
     protected $customerSubscriptionService;
-
     private $authService;
 
     public function __construct(
@@ -30,8 +31,7 @@ class CustomerController extends Controller
         CustomerRepository $customerRepository,
         ProfileAvatarService $profileAvatarService,
         IdentityCardUploaderService $identityCardUploaderService,
-        CustomerSubscriptionService $customerSubscriptionService
-    )
+        CustomerSubscriptionService $customerSubscriptionService)
     {
         $this->customer = $customerRepository;
         $this->profileAvatarService = $profileAvatarService;
@@ -171,13 +171,56 @@ class CustomerController extends Controller
     }
 
 
+    public function getRemainingSession($subscriptionId)
+    {
+        return \App\Subscription::where("id", $subscriptionId)->value('duration') ;
+
+    }
+
+    public function payfromCashbinga(Request $request)
+    {
+        $customer = $this->authService->connected(true);
+
+        $data = $request->all();
+        Log::info($data);
+//        $paymentID = $request->get('payment');
+
+        try {
+           //Todo Send a call to QrCode generator
+
+            foreach ($data as  $value) {
+                Log::info($value);
+
+                //get session from duration
+                $customerSubscription = customerSubscription::create([
+                    'customer_id' => $customer->id,
+                    'gym_subscription_type' => $value['id'],
+                    "qrcode" => (string)Str::uuid(),
+                    "payment_method_id" => 4,
+                    "price" => $value['price'],
+                    "consumed_at" => $value['consumed_at'],
+                    "remaining_sessions" => $this->getRemainingSession($value['subscription_id']),
+                ]);
+                Log::info($customerSubscription->id);
+                $customerSubscription->statuses()->attach(1,['datetime' => now()]);
+            }
+
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            return false;
+        }
+
+        return response()->json([
+            'customer_charged' => $customerSubscription
+        ]);
+
+    }
+
+
     public function updateSubscription(Request $request)
     {
-        $account = \JWTAuth::parseToken()->authenticate();
-        if (!$account)
-            abort(404);
+        $customer = $this->authService->connected(true);
 
-        $customer = $account->accountable()->first();
 
         $passId = $request->get('pass');
 //        $request->get('status_id');
@@ -194,14 +237,6 @@ class CustomerController extends Controller
 //            20000 equivalent a 200 dh because stripe take all amount as a cent so 2000 cent /100 => ? dh
             $stripeCharge = $customer->charge(39999, $paymentID);
 
-//        group_subscription_id
-//        customer_id
-//        price
-//        qrcode
-//        payment_method_id
-//        consumed_at
-//        remaining_sessions
-            //Todo Send a call to QrCode generator
             $customerSubscription = customerSubscription::create($data);
 
 
@@ -209,17 +244,8 @@ class CustomerController extends Controller
             // Todo attach status to custome subscription By confirmed when payed
             //status by default inactive
 
-//            $tabCustomer = DB::table('customer_subscription_statuses')->insert(
-//                [
-//                    'customer_subscription_id' => $customerSubscription->id,
-//                    'status_id' => $statusId,
-//                    'datetime' => now(),
-//                ]
-//            );
-//            $customerSubscription->statuses()->attach([19 , $statusId]);
 
 
-//            $payment = $user->charge(100, $paymentMethod);
         } catch (Exception $e) {
 
             Log::info($e->getMessage());
