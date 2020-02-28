@@ -105,6 +105,7 @@ class AccountSeeder extends Seeder
         // Fake user
         \App\Account::where("accountable_type", "App\\Admin")->first()->update(["username" => "@verify", "disabled" => 0]);
         \App\Account::where("accountable_type", "App\\Customer")->first()->update(["email" => "s1@spotfit.ma", "disabled" => 0]);
+        \App\Account::where("accountable_type", "App\\Partner")->first()->update(["email" => "pp1@spotfit.ma", "disabled" => 0]);
     }
 
     private function getRandomSessions(int $min, int $max, int $customer_subscription_id)

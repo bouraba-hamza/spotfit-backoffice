@@ -31,9 +31,18 @@ class AccountService
 
         return $role;
     }
+
     public static function customer($person)
     {
         if ($person instanceof \App\Customer)
+            return true;
+
+        return false;
+    }
+
+    public static function partner($person)
+    {
+        if ($person instanceof \App\Partner)
             return true;
 
         return false;

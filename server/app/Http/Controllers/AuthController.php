@@ -12,8 +12,6 @@ use phpDocumentor\Reflection\Types\Boolean;
 
 class AuthController extends Controller
 {
-
-
     public function getWhatsapp(){
 
 //        $phone = $request->query('phone');
@@ -80,7 +78,7 @@ class AuthController extends Controller
         return $account_owner;
     }
 
-    public function login(Request $request, $emailVerification = true)
+    public function login(Request $request, $emailVerification = true, $role = 'customer')
     {
         $credentials = $request->only('username', 'password', 'email');
 
@@ -99,7 +97,7 @@ class AuthController extends Controller
 
         // the password dosn't match
         if (!$truePass) {
-            return ["errors" => ["les informations d'identification invalides: "]];
+            return ["errors" => ["les informations d'identification invalides."]];
         }
 
         if($emailVerification) {
@@ -119,6 +117,11 @@ class AuthController extends Controller
             return response()->json(['errors' => ["Impossible de générer Impossible de créer un clé d'authentification"]]);
         }
 
+        // todo: retrieve attached role
+        if($role !== $account->getRoleNames()[0]) {
+            return ["errors" => ["les informations d'identification invalides."]];
+        }
+
         // who is the owner
         $account_owner = $account->accountable()->first();
 
@@ -132,7 +135,12 @@ class AuthController extends Controller
 
     public function authenticateCustomer(Request $request)
     {
-        return $this->login($request, false);
+        return $this->login($request, false, 'customer');
+    }
+
+    public function authenticatePartner(Request $request)
+    {
+        return $this->login($request, false, 'partner');
     }
 
     private function formatToken($token)
