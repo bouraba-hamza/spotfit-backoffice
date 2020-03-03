@@ -4,6 +4,7 @@ use \App\Http\Controllers\CustomerController;
 use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\IdentityCardController;
 use App\Http\Controllers\PaymentController;
+use \App\Http\Controllers\Partner\HistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,13 @@ use App\Http\Controllers\PaymentController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
+Route::group(['middleware' => ['jwt', 'role:partner|receptionist|supervisor']], function () {
+    Route::get('/visits', [ HistoryController::class, 'getVisits' ]);
+});
+
+
+
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
 
@@ -40,6 +48,7 @@ Route::get('/me', 'AuthController@getAuthenticatedUser');
 Route::post('/login', 'AuthController@login');
 Route::get('/getwhatsapp', 'AuthController@getWhatsapp');
 Route::post('/login/customer', [AuthController::class, 'authenticateCustomer']);
+Route::post('/login/partner', [AuthController::class, 'authenticatePartner']);
 Route::post('/login/customersignInMethod', [AuthController::class, 'SigninWithGoogle']);
 Route::post('/login/customersignInMethodTwitter', [AuthController::class, 'SigninWithtwitter']);
 Route::post('/logout', 'AuthController@logout');

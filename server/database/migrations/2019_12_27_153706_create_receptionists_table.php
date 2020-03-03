@@ -23,7 +23,7 @@ class CreateReceptionistsTable extends Migration
             $table->string('jobTitle')->nullable();
             $table->string('cin')->nullable();
             $table->string('avatar')->nullable();
-            $table->string('gym_id')->nullable();;
+            $table->integer('supervisor_id')->nullable();
             $table->timestamps();
         });
     }
