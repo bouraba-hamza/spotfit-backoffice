@@ -20,6 +20,7 @@ class CreateCustomersTable extends Migration
             $table->string('lastName')->nullable();
             $table->enum('gender', ['m', 'f'])->nullable();
             $table->date('birthDay')->nullable();
+            $table->boolean('sickness')->nullable();
             $table->string('phoneNumber')->nullable();
             $table->string('cin')->nullable();
             $table->string('IDF')->nullable();

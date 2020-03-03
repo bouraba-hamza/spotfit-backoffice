@@ -82,6 +82,7 @@ Route::group(['prefix' => 'v1', 'middleware' => [/* 'jwt' , /* 'jwt.refresh' */]
 
     Route::get('/customer/setup-intent', "CustomerController@getSetupIntent");
     Route::post('/customer/payments', 'CustomerController@postPaymentMethods');
+    Route::post('/customer/updateQrcode', 'CustomerController@updateQrcode');
     Route::get('/customer/payment-methods', 'CustomerController@getPaymentMethods');
     Route::post('/customer/remove-payment', 'CustomerController@removePaymentMethod');
     Route::put('/customer/subscription', 'CustomerController@updateSubscription');

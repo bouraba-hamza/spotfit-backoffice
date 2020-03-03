@@ -11,6 +11,7 @@ use App\Services\CustomerSubscriptionService;
 use App\Services\IdentityCardUploaderService;
 use App\Services\ProfileAvatarService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -173,7 +174,7 @@ class CustomerController extends Controller
 
     public function getRemainingSession($subscriptionId)
     {
-        return \App\Subscription::where("id", $subscriptionId)->value('duration') ;
+        return \App\Subscription::where("id", $subscriptionId)->value('duration');
 
     }
 
@@ -186,13 +187,13 @@ class CustomerController extends Controller
 //        $paymentID = $request->get('payment');
 
         try {
-           //Todo Send a call to QrCode generator
+            //Todo Send a call to QrCode generator
 
-            foreach ($data as  $value) {
+            foreach ($data as $value) {
                 Log::info($value);
 
                 //get session from duration
-                $customerSubscription = customerSubscription::create([
+                $customerSubscription = CustomerSubscription::create([
                     'customer_id' => $customer->id,
                     'gym_subscription_type' => $value['id'],
                     "qrcode" => (string)Str::uuid(),
@@ -202,7 +203,7 @@ class CustomerController extends Controller
                     "remaining_sessions" => $this->getRemainingSession($value['subscription_id']),
                 ]);
                 Log::info($customerSubscription->id);
-                $customerSubscription->statuses()->attach(1,['datetime' => now()]);
+                $customerSubscription->statuses()->attach(1, ['datetime' => now()]);
             }
 
         } catch (Exception $e) {
@@ -216,6 +217,23 @@ class CustomerController extends Controller
 
     }
 
+    public function updateQrcode(Request $request)
+    {
+        $data = $request->all();
+
+        Log::info($data);
+        foreach ($data as $value) {
+
+            Log::info($value);
+            $customer_subscription = \App\CustomerSubscription::findOrFail($value)->update(['qrcode' => (string)Str::uuid()]);;
+            Log::info($customer_subscription);
+        }
+
+        return response()->json([
+            'qrcode_changed' => $customer_subscription
+        ]);
+
+    }
 
     public function updateSubscription(Request $request)
     {
@@ -243,7 +261,6 @@ class CustomerController extends Controller
             Log::info($customerSubscription);
             // Todo attach status to custome subscription By confirmed when payed
             //status by default inactive
-
 
 
         } catch (Exception $e) {
