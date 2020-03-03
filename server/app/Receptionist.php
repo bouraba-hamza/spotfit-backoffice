@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Receptionist extends Model
 {
-
     protected $with = ['account', 'address'];
 
     protected $fillable = [
@@ -18,7 +17,6 @@ class Receptionist extends Model
         'cin',
         'jobTitle',
         'avatar',
-        'gym_id'
     ];
 
     public function address()
@@ -33,6 +31,11 @@ class Receptionist extends Model
 
     public function gym()
     {
-        return $this->hasOne(Gym::class);
+        return $this->supervisor()->first()->gym();
+    }
+
+    public function supervisor()
+    {
+        return $this->hasOne(Supervisor::class, 'id', 'supervisor_id');
     }
 }

@@ -13,6 +13,7 @@ $factory->define(\App\Account::class, function (Faker $faker) {
         App\Customer::class,
         App\Trainer::class,
         App\Supervisor::class,
+        App\Receptionist::class,
     ];
 
     $accountableType = $faker->randomElement($accountables);

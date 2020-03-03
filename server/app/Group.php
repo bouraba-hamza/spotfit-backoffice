@@ -22,9 +22,7 @@ class Group extends Model
 
     public function partner()
     {
-
         return $this->hasOne(Partner::class);
-
     }
 
 }

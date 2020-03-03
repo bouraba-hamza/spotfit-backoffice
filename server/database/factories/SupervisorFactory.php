@@ -15,5 +15,6 @@ $factory->define(Supervisor::class, function (Faker $faker) {
         'cin' => strtoupper($faker->randomLetter) . strtoupper($faker->randomLetter) .  $faker->randomNumber($nbDigits = 8, true),
         'jobTitle' => $faker->jobTitle,
         'avatar' => 'a' . $faker->randomElement([1, 2, 3, 4]) . '.png',
+        'gym_id' => rand(1, 10),
     ];
 });

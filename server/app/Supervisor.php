@@ -33,7 +33,7 @@ class Supervisor extends Model
 
     public function gym()
     {
-        return $this->hasOne(Gym::class);
+        return $this->hasOne(Gym::class, 'id', 'gym_id');
     }
 
 }

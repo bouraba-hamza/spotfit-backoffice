@@ -36,7 +36,7 @@ $factory->define(Gym::class, function (Faker $faker) {
     $gymName = $faker->words(3, true);
     return [
         "group_id" => function () use ($gymName) {
-            return factory(App\Group::class)->create(['name' => $gymName,])->id;
+            return factory(App\Group::class)->create(['name' => $gymName, 'partner_id' => rand(1, 10)])->id;
         },
         "logo" => $faker->randomElement($logos),
         "name" => $gymName,

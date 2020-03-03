@@ -18,7 +18,7 @@ class ReceptionistRequest extends FormRequest
         'account.username.unique' => 'le nom d\'utilisateur déjà pris',
         'account.password.required' => 'le champ mote de passe est requis',
         'account.password.min' => 'la longueur du mot de passe doit être d\'au moins 6 caractères',
-        'gym_id.required' => 'la salle de sport est obligatoire',
+        /*'gym_id.required' => 'la salle de sport est obligatoire',*/
     ];
 
     /**
@@ -45,7 +45,7 @@ class ReceptionistRequest extends FormRequest
             'account.email' => 'required|email|unique:accounts,email',
             'account.username' => 'required|unique:accounts,username',
             'account.password' => 'required|min:6',
-            'gym_id' => 'required|numeric',
+            /*'gym_id' => 'required|numeric',*/
         ];
     }
 

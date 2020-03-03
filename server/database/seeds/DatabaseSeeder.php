@@ -1,6 +1,5 @@
 <?php
 
-use App\Services\AccountService;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,9 +12,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Calling other seeders
-       $this->call([RolesAndPermissionsSeeder::class]);
-       $this->call([GymsSeeder::class]);
-       $this->call([AccountSeeder::class]);
-       $this->call([SettingSeeder::class]);
+        $this->call([RolesAndPermissionsSeeder::class]);
+        $this->call([GymsSeeder::class]);
+        $this->call([AccountSeeder::class]);
+        $this->call([SettingSeeder::class]);
     }
 }

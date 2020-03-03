@@ -3,6 +3,7 @@
 use \App\Http\Controllers\CustomerController;
 use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\IdentityCardController;
+use \App\Http\Controllers\Partner\HistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,13 @@ use \App\Http\Controllers\IdentityCardController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
+Route::group(['middleware' => ['jwt', 'role:partner|receptionist|supervisor']], function () {
+    Route::get('/visits', [ HistoryController::class, 'getVisits' ]);
+});
+
+
+
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
 

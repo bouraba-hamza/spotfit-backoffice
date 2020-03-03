@@ -73,6 +73,7 @@ class GymsSeeder extends Seeder
         DB::table('gym_subscription_types')->truncate();
         DB::table('addresses')->where("addressable_type",  "App\\Gym")->delete();
 
+        // GYMS
         $i = 0;
         factory(\App\Gym::class, 20)
             ->create()
@@ -142,5 +143,6 @@ class GymsSeeder extends Seeder
                 $gym->activities()->saveMany($activities);
 
             });
+        // #GYMS
     }
 }

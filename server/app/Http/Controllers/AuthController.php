@@ -78,7 +78,7 @@ class AuthController extends Controller
         return $account_owner;
     }
 
-    public function login(Request $request, $emailVerification = true, $role = 'customer')
+    public function login(Request $request, $emailVerification = true, $roles = ['customer'])
     {
         $credentials = $request->only('username', 'password', 'email');
 
@@ -118,7 +118,7 @@ class AuthController extends Controller
         }
 
         // todo: retrieve attached role
-        if($role !== $account->getRoleNames()[0]) {
+        if(!in_array($account->getRoleNames()->first(), $roles)) {
             return ["errors" => ["les informations d'identification invalides."]];
         }
 
@@ -135,12 +135,12 @@ class AuthController extends Controller
 
     public function authenticateCustomer(Request $request)
     {
-        return $this->login($request, false, 'customer');
+        return $this->login($request, false, ['customer']);
     }
 
     public function authenticatePartner(Request $request)
     {
-        return $this->login($request, false, 'partner');
+        return $this->login($request, false, ['partner', 'receptionist', 'supervisor']);
     }
 
     private function formatToken($token)
