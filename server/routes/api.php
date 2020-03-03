@@ -3,6 +3,7 @@
 use \App\Http\Controllers\CustomerController;
 use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\IdentityCardController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,18 +68,18 @@ Route::post('/reset-password', 'PasswordController@sendResetLink');
 Route::get('/verify-email/{code}', [AuthController::class, 'verifyEmail']);
 Route::get('/token/refresh', 'AuthController@refresh');
 
-   /**
-     * Base64ToPngs
-     */
-    Route::get("/base64ToPng", "Base64ToPngController@index");
-    Route::put('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@destroy');
-    Route::post('/base64ToPng', 'Base64ToPngController@store');
-    //Route::post('/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
-    Route::post('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@update');
-    Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
+/**
+ * Base64ToPngs
+ */
+Route::get("/base64ToPng", "Base64ToPngController@index");
+Route::put('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@destroy');
+Route::post('/base64ToPng', 'Base64ToPngController@store');
+//Route::post('/base64ToPng/{name}/{code}', 'Base64ToPngController@store');
+Route::post('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@update');
+Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
 
 
-Route::group(['prefix' => 'v1', 'middleware' => [/* 'jwt' , /* 'jwt.refresh' */]], function () {
+Route::group(['prefix' => 'v1', 'middleware' => ['jwt','role:customer']], function () {
 
     Route::get('/customer/setup-intent', "CustomerController@getSetupIntent");
     Route::post('/customer/payments', 'CustomerController@postPaymentMethods');
@@ -87,7 +88,9 @@ Route::group(['prefix' => 'v1', 'middleware' => [/* 'jwt' , /* 'jwt.refresh' */]
     Route::post('/customer/remove-payment', 'CustomerController@removePaymentMethod');
     Route::put('/customer/subscription', 'CustomerController@updateSubscription');
     Route::put('/customer/subscription-pay', 'CustomerController@payfromCashbinga');
-
+    Route::post('/pay/payFormBinga', [PaymentController::class, 'payFormBinga']);
+    Route::post('/pay/bookFromBinga',[PaymentController::class, 'bookFromBinga']);
+    Route::post('/pay/payCashFromBinga-pay',[PaymentController::class, 'payCashFromBinga']);
 });
 
 /**
@@ -103,7 +106,7 @@ Route::get('/base64ToPng/{base64ToPng_id}', 'Base64ToPngController@show');
 Route::group(['middleware' => ['jwt', 'role:customer']], function () {
     Route::post('/update-infos', [CustomerController::class, 'editProfile']);
     Route::post('/identity-card/upload', [CustomerController::class, 'uploadIdentityCard']);
-    Route::get('/identity/{side}', [ IdentityCardController::class, 'getIdentityCard' ]);
+    Route::get('/identity/{side}', [IdentityCardController::class, 'getIdentityCard']);
 });
 
 Route::group(['middleware' => ['jwt', /* 'jwt.refresh' */]], function () {
@@ -175,7 +178,6 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
 
     /* USERS PROFILE PICTURES */
     Route::get('profile-picture/{filename}', 'ProfilePictureController@getAvatar');
-
 
 
     /**
@@ -255,8 +257,6 @@ Route::group(['middleware' => ['jwt', 'role:admin']], function () {
 
 
 });
-
-
 
 
 Route::get("/gym", "GymController@index");

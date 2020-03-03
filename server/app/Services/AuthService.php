@@ -3,8 +3,6 @@
 
 namespace App\Services;
 
-use http\Env\Request;
-
 class AuthService
 {
     public function connected($accountable = false)

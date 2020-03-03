@@ -427,9 +427,9 @@ class GymController extends Controller
 
         $subscriptiontype = Gym::where('gym_id', $gymid)->join('gym_subscription_types', 'gym_subscription_types.gym_id', '=', 'gyms.id')
             ->Join('classes', 'classes.id', '=', 'gyms.class_id')
-            ->Join('subscriptions', 'subscriptions.id', '=', 'gym_subscription_types.subscription_id')
+//            ->Join('subscriptions', 'subscriptions.id', '=', 'gym_subscription_types.subscription_id')
             ->Join('types', 'types.id', '=', 'gym_subscription_types.type_id')
-            ->select('subscriptions.name as name', 'types.name  as regime', 'gym_subscription_types.*', 'classes.name as classname')
+            ->select('types.name  as regime', 'gym_subscription_types.*', 'classes.name as classname')
             ->get();
 
 

@@ -178,12 +178,17 @@ class CustomerController extends Controller
 
     }
 
+    public function getPrice($gymSubscriptionId)
+    {
+        return \App\GymSubscriptionType::where('id',$gymSubscriptionId)->value('price');
+
+    }
+
     public function payfromCashbinga(Request $request)
     {
         $customer = $this->authService->connected(true);
 
         $data = $request->all();
-        Log::info($data);
 //        $paymentID = $request->get('payment');
 
         try {
@@ -198,11 +203,11 @@ class CustomerController extends Controller
                     'gym_subscription_type' => $value['id'],
                     "qrcode" => (string)Str::uuid(),
                     "payment_method_id" => 4,
-                    "price" => $value['price'],
+                    // todo price calculate here not in the frontend
+                    "price" => $this->getPrice($value['id']),
                     "consumed_at" => $value['consumed_at'],
                     "remaining_sessions" => $this->getRemainingSession($value['subscription_id']),
                 ]);
-                Log::info($customerSubscription->id);
                 $customerSubscription->statuses()->attach(1, ['datetime' => now()]);
             }
 
