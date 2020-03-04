@@ -376,6 +376,9 @@ class CustomerController extends Controller
         $customer = $account->accountable()->first();
 
         $data = $request->all();
+//        $bool = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+
+        Log::info($data['sickness']);
 
         // Updating email and password should not be here
         /*unset($data['account']['email']);

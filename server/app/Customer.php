@@ -27,6 +27,7 @@ class Customer extends Model
         'avatar',
         'ambassador',
         'IDF',
+        'sickness',
         'IDB',
         'completed',
     ];
