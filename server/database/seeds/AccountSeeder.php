@@ -74,7 +74,6 @@ class AccountSeeder extends Seeder
                         $fakeSubscription = [
                             "gym_subscription_type" => $this->getRandomGymSubscriptionTypeRecord(),
                             "price" => $this->faker->numberBetween(40, 700),
-                            "qrcode" => $this->faker->uuid,
                             "payment_method_id" => 1,
                             "consumed_at" => $this->faker->dateTime,
                             "remaining_sessions" => rand(0, 31),

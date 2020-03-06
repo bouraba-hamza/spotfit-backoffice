@@ -196,12 +196,11 @@ class CustomerController extends Controller
 
             foreach ($data as $value) {
                 Log::info($value);
-
                 //get session from duration
                 $customerSubscription = CustomerSubscription::create([
                     'customer_id' => $customer->id,
                     'gym_subscription_type' => $value['id'],
-                    "qrcode" => (string)Str::uuid(),
+//                    "qrcode" => (string)Str::uuid(),
                     "payment_method_id" => 4,
                     // todo price calculate here not in the frontend
                     "price" => $this->getPrice($value['id']),
@@ -222,21 +221,15 @@ class CustomerController extends Controller
 
     }
 
-    public function updateQrcode(Request $request)
+    public function updateQrcode()
     {
-        $data = $request->all();
+        $customer = $this->authService->connected(true);
+        Log::info($customer);
+        $customer =  $this->customer->update($customer->id, ['qrcode' => (string)Str::uuid()]);
 
-        Log::info($data);
-        foreach ($data as $value) {
+        Log::info($customer);
 
-            Log::info($value);
-            $customer_subscription = \App\CustomerSubscription::findOrFail($value)->update(['qrcode' => (string)Str::uuid()]);;
-            Log::info($customer_subscription);
-        }
-
-        return response()->json([
-            'qrcode_changed' => $customer_subscription
-        ]);
+        return $customer;
 
     }
 

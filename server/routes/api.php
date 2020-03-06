@@ -22,7 +22,9 @@ Route::group(['middleware' => ['jwt', 'role:partner|receptionist|supervisor']], 
 });
 
 
-
+Route::post('/pay/payFormBinga', [PaymentController::class, 'payFormBinga']);
+Route::post('/pay/bookFromBinga',[PaymentController::class, 'bookFromBinga']);
+Route::post('/pay/payCashFromBinga',[PaymentController::class, 'payCashFromBinga']);
 
 Route::get("/gyms", [\App\Http\Controllers\GymController::class, 'fetch']);
 
@@ -92,14 +94,12 @@ Route::group(['prefix' => 'v1', 'middleware' => ['jwt','role:customer']], functi
 
     Route::get('/customer/setup-intent', "CustomerController@getSetupIntent");
     Route::post('/customer/payments', 'CustomerController@postPaymentMethods');
-    Route::post('/customer/updateQrcode', 'CustomerController@updateQrcode');
+    Route::get('/customer/updateQrcode', 'CustomerController@updateQrcode');
     Route::get('/customer/payment-methods', 'CustomerController@getPaymentMethods');
     Route::post('/customer/remove-payment', 'CustomerController@removePaymentMethod');
     Route::put('/customer/subscription', 'CustomerController@updateSubscription');
     Route::put('/customer/subscription-pay', 'CustomerController@payfromCashbinga');
-    Route::post('/pay/payFormBinga', [PaymentController::class, 'payFormBinga']);
-    Route::post('/pay/bookFromBinga',[PaymentController::class, 'bookFromBinga']);
-    Route::post('/pay/payCashFromBinga-pay',[PaymentController::class, 'payCashFromBinga']);
+
 });
 
 /**

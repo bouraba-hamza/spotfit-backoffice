@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Customer::class, function (Faker $faker) {
     return [
-        'qrcode' => $faker->md5,
+        'qrcode' => $faker->uuid,
         'firstName' => $faker->firstNameMale,
         'lastName' => $faker->lastName,
         'gender' => $faker-> randomElement($array = array ('m', 'f')),

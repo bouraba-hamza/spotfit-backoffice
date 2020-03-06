@@ -18,7 +18,6 @@ class CreateCustomerSubscriptionTable extends Migration
             $table->integer('customer_id');
             $table->integer('gym_subscription_type');
             $table->float('price');
-            $table->text('qrcode');
             $table->integer('payment_method_id');
             $table->dateTime('consumed_at');
             $table->integer('remaining_sessions');
